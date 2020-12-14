@@ -39,9 +39,9 @@ jobs:
       run: |
         mv config.yaml.example config.yaml
         sed -i '/FOR_EXAMPLE/d' config.yaml
-        sed -i 's/<hCAPTCHA_ACCESSIBILITY_URL>/${{ secrets.hCaptchaURL }}/' config.yaml
-        sed -i 's/<EPIC_GAMES_STORE_USERNAME>/${{ secrets.username }}/' config.yaml
-        sed -i 's/<EPIC_GAMES_STORE_PASSWORD>/${{ secrets.password }}/' config.yaml
+        sed -i 's|<hCAPTCHA_ACCESSIBILITY_URL>|${{ secrets.hCaptchaURL }}|' config.yaml
+        sed -i 's|<EPIC_GAMES_STORE_USERNAME>|${{ secrets.username }}|' config.yaml
+        sed -i 's|<EPIC_GAMES_STORE_PASSWORD>|${{ secrets.password }}|' config.yaml
     
     - name: Run
       run: ./games-yeeter-2000
