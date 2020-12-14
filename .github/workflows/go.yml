@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Download & Install Chrome
-      run: apt update && apt install -y google-chrome-stable
+      run: sudo apt update && sudo apt install -y google-chrome-stable
 
     - name: Set up Go 1.x
       uses: actions/setup-go@v2
