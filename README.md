@@ -13,6 +13,7 @@ This example file also shows what it should look like. If you want to use one ke
 - Fill in your username & password as well, to be able to log into the Epic Games store.  
 - Rename config.yaml.example to config.yaml and make sure it is in the same directory as your executable.
 - Make sure you have Chrome installed, and run the program!  
+IMPORTANT - Epic Games Store only accepts e-mail, not your actual username, apparently.
 ## Automatic
 `Regarding the secrets, follow the instructions above.`  
 There is no support for 2FA (yet).  
