@@ -43,5 +43,7 @@ jobs:
         sed -i 's|<EPIC_GAMES_STORE_USERNAME>|${{ secrets.username }}|' config.yaml
         sed -i 's|<EPIC_GAMES_STORE_PASSWORD>|${{ secrets.password }}|' config.yaml
     
-    - name: Run
-      run: ./games-yeeter-2000
+    - name: Run with XVFB
+      uses: GabrielBB/xvfb-action@v1.4
+      with:
+        run: ./games-yeeter-2000
