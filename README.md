@@ -19,5 +19,8 @@ The example file shows what it should look like.
   - hCaptchaURL
   - username
   - password
-- It will run twice per day, each day.  
-If it fails, open an issue and I might look into it.
+- Enable [Git Actions](https://docs.github.com/en/free-pro-team@latest/actions/managing-workflow-runs/disabling-and-enabling-a-workflow) and enable the 'Go' workflow.
+- It will run twice per day, each day. Do not adjust the interval, hCaptcha has very strict ratelimits.  
+
+
+If it all fails, open an issue and I might look into it.
