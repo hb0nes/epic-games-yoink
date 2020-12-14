@@ -1,5 +1,5 @@
 hCaptchaURLs: 
   - <hCAPTCHA_ACCESSIBILITY_URL>
-  - <POTENTIALLY_ANOTHER_URL>
+  - <FOR_EXAMPLE:https://accounts.hcaptcha.com/verify_email/a846b45f-c7bc-4a5d-a63b-d9eab0470aa1>
 username: "<EPIC_GAMES_STORE_USERNAME>"
 password: "<EPIC_GAMES_STORE_PASSWORD>"

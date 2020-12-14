@@ -5,7 +5,7 @@
 *.so
 *.dylib
 config.yaml
-
+games_yeeter_2000*
 # Test binary, built with `go test -c`
 *.test
 
