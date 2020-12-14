@@ -14,7 +14,7 @@ This example file also shows what it should look like. If you want to use one ke
 - Rename config.yaml.example to config.yaml and make sure it is in the same directory as your executable.
 - Make sure you have Chrome installed, and run the program!  
 ## Automatic
-`Regarding the secrets, follow the instructions above.`
+`Regarding the secrets, follow the instructions above.`  
 There is no support for 2FA (yet).  
 - Fork this repository
 - Add three GitHub secrets:
