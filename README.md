@@ -7,13 +7,14 @@ No data is shared with third parties or me.
 There are two methods of automatically adding all of these games, manual and automatic.
 ## Manual
 - Clone the repository
-- Go to https://dashboard.hcaptcha.com/signup?type=accessibility and get an accessibility URL by filling in your e-mail. The mail contains a button.  
-Right click this button and get the URL to insert it into config.yaml.  
-The example file shows what it should look like.  
-- Fill in your username & password as well to use for logging into Epic Games store.  
-- Rename config.yaml.example to config.yaml
-- Make sure you have Chrome installed, and run the program.  
+- Go [here](https://dashboard.hcaptcha.com/signup?type=accessibility) and get an accessibility URL by filling in your e-mail. The mail that they send you contains a button.  
+Right click this button and get the URL, and insert that URL in config.yaml.example    
+This example file also shows what it should look like. If you want to use one key, remove the example so that you only have one entry left (your own key).  
+- Fill in your username & password as well, to be able to log into the Epic Games store.  
+- Rename config.yaml.example to config.yaml and make sure it is in the same directory as your executable.
+- Make sure you have Chrome installed, and run the program!  
 ## Automatic
+`Regarding the secrets, follow the instructions above.`
 - Fork this repository
 - Add three GitHub secrets:
   - hCaptchaURL
