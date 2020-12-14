@@ -85,19 +85,19 @@ func getFreeGameURLs(ctx context.Context) (urls []string) {
 }
 
 func getAccessibilityCookie(ctx context.Context) {
+	tries := 2
 	for _, link := range config.HCaptchaURLs {
 		chromedp.Navigate(link).Do(ctx)
 		chromedp.WaitEnabled(`//button[@data-cy='setAccessibilityCookie']`).Do(ctx)
-		chromedp.Sleep(time.Millisecond * time.Duration(rand.Intn(2500)+2500)).Do(ctx)
-		chromedp.Click(`//button[@data-cy='setAccessibilityCookie']`).Do(ctx)
-		chromedp.Sleep(time.Millisecond * time.Duration(rand.Intn(2500)+2500)).Do(ctx)
-		if accessibilityCookie, _ := checkCookies(ctx); accessibilityCookie {
-			fmt.Println("Acquired hCaptcha cookie!")
-			return
+		for i := 0; i < tries; i++ {
+			chromedp.Sleep(time.Millisecond * time.Duration(rand.Intn(2500)+2500)).Do(ctx)
+			chromedp.Click(`//button[@data-cy='setAccessibilityCookie']`).Do(ctx)
+			chromedp.Sleep(time.Millisecond * time.Duration(rand.Intn(2500)+2500)).Do(ctx)
+			if accessibilityCookie, _ := checkCookies(ctx); accessibilityCookie {
+				fmt.Println("Acquired hCaptcha cookie!")
+				return
+			}
 		}
-		chromedp.Sleep(time.Millisecond * time.Duration(rand.Intn(250)+250)).Do(ctx)
-		chromedp.Click(`//button[@data-cy='setAccessibilityCookie']`).Do(ctx)
-		chromedp.Sleep(time.Millisecond * time.Duration(rand.Intn(2500)+2500)).Do(ctx)
 	}
 	log.Fatal("Couldn't get accessibility cookie from hCaptcha, so cannot bypass captcha. Try again another time.")
 }
