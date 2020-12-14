@@ -20,4 +20,5 @@ The example file shows what it should look like.
   - username
   - password
 - Unstar/Star your own repository. A GitHub action is now started that will take care of everything for you.  
+It will run twice per day, each day.  
 If it fails, open an issue and I might look into it.
