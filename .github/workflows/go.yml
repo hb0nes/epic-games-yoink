@@ -1,0 +1,44 @@
+name: Go
+
+on:
+  watch:
+    types: [started] # When repo owner stars this repo
+
+jobs:
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download & Install Chrome
+      run: apt update && apt install -y google-chrome-stable
+
+    - name: Set up Go 1.x
+      uses: actions/setup-go@v2
+      with:
+        go-version: ^1.15.2
+
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v2
+      
+    - name: Get dependencies
+      run: |
+        go get -v -t -d ./...
+        if [ -f Gopkg.toml ]; then
+            curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+            dep ensure
+        fi
+
+    - name: Build
+      run: go build -v ./... -o games-yeeter-2000
+
+    - name: "Configuring config.yaml"
+      run: |
+        mv config.yaml.example config.yaml
+        sed -i '/FOR_EXAMPLE/d' config.yaml
+        sed -i 's/<hCAPTCHA_ACCESSIBILITY_URL>/${{ secrets.hCaptchaURL }}/' config.yaml
+        sed -i 's/<EPIC_GAMES_STORE_USERNAME>/${{ secrets.username }}/' config.yaml
+        sed -i 's/<EPIC_GAMES_STORE_PASSWORD>/${{ secrets.password }}/' config.yaml
+    
+    - name: Run
+      run: ./games-yeeter-2000
