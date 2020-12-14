@@ -19,7 +19,7 @@ There is no support for 2FA (yet).
 - Fork this repository
 - Add three GitHub secrets:
   - hCaptchaURL
-  - email
+  - username
   - password
 - Enable [Git Actions](https://docs.github.com/en/free-pro-team@latest/actions/managing-workflow-runs/disabling-and-enabling-a-workflow) and enable the 'Go' workflow.
 - It will run twice per day, each day. Do not adjust the interval, hCaptcha has very strict ratelimits.  
