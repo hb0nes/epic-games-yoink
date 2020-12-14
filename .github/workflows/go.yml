@@ -28,9 +28,12 @@ jobs:
             curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
             dep ensure
         fi
+        
+    - name: Where are we?
+      run: pwd && ls -lrth
 
     - name: Build
-      run: go build -v ./... -o games-yeeter-2000
+      run: go build -o games-yeeter-2000 -v ./... 
 
     - name: "Configuring config.yaml"
       run: |
