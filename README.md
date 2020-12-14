@@ -2,7 +2,8 @@
 This repository can serve as a example for your own code, or can be used as a full solution.  
 The program will log into your account on epicgames.com and add all free games that it finds to your account.  
 It uses hCaptcha's own hCaptcha bypass mechanism B-).  
-No data is shared with third parties or me.
+No data is shared with third parties or me.  
+I also am not responsible for any misery caused to you by this program.  
 # Getting Started
 There are two methods of automatically adding all of these games, manual and automatic.
 ## Manual
@@ -17,7 +18,7 @@ IMPORTANT - Epic Games Store only accepts e-mail, not your actual username, appa
 ## Automatic
 `Regarding the secrets, follow the instructions above.`  
 There is no support for 2FA (yet).  
-- Fork this repository
+- [Fork](https://github.com/hb0nes/epic-store-free-games-snatcher/fork)  this repository
 - Add three GitHub secrets:
   - hCaptchaURL
   - username
