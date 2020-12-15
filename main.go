@@ -207,7 +207,7 @@ func main() {
 	opts := []chromedp.ExecAllocatorOption{
 		chromedp.NoFirstRun,
 		chromedp.NoDefaultBrowserCheck,
-		chromedp.UserDataDir(`/home/b0nes/.config/google-chrome`),
+		chromedp.UserDataDir(dir),
 		chromedp.DisableGPU,
 		chromedp.Flag("disable-popup-blocking", true),
 		chromedp.Flag("start-maximized", true),
