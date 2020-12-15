@@ -28,3 +28,4 @@ There is no support for 2FA (yet).
 
 
 If it all fails, open an issue and I might look into it.
+I might also not.
