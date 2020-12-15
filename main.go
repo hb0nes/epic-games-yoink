@@ -41,6 +41,7 @@ func handleFreeGames(c context.Context, urls []string) {
 		fmt.Println("Waiting for GET button")
 		if err := doSlowCall(c, chromedp.WaitEnabled(`//button[@data-testid="purchase-cta-button"]`), 5); err == nil {
 			fmt.Println("Clicking GET button")
+			chromedp.Sleep(time.Second).Do(c)
 			chromedp.Click(`//button[@data-testid="purchase-cta-button"]`).Do(c)
 		} else {
 			fmt.Println("Could not find the GET button. Skipping.")
@@ -49,6 +50,7 @@ func handleFreeGames(c context.Context, urls []string) {
 		fmt.Println("Waiting for checkbox")
 		if err := doSlowCall(c, chromedp.WaitEnabled(`//i[@class="icon-checkbox-unchecked radio-unchecked"]`), 5); err == nil {
 			fmt.Println("Clicking checkbox")
+			chromedp.Sleep(time.Second).Do(c)
 			chromedp.Click(`//i[@class="icon-checkbox-unchecked radio-unchecked"]`).Do(c)
 		} else {
 			fmt.Println("Could not find the Checkbox. Skipping.")
@@ -57,6 +59,7 @@ func handleFreeGames(c context.Context, urls []string) {
 		fmt.Println("Waiting for Place Order")
 		if err := doSlowCall(c, chromedp.WaitEnabled(`//button[./span[text()[contains(.,"Place Order")]]]`), 5); err == nil {
 			fmt.Println("Clicking Place Order")
+			chromedp.Sleep(time.Second).Do(c)
 			chromedp.Click(`//button[./span[text()[contains(.,"Place Order")]]]`).Do(c)
 		} else {
 			fmt.Println("Could not find the Place Order button. Skipping.")
@@ -65,6 +68,7 @@ func handleFreeGames(c context.Context, urls []string) {
 		fmt.Println("Waiting for Agreement")
 		if err := doSlowCall(c, chromedp.WaitEnabled(`//button[span[text()="I Agree"]]`), 5); err == nil {
 			fmt.Println("Clicking I Agree")
+			chromedp.Sleep(time.Second).Do(c)
 			chromedp.Click(`//button[span[text()="I Agree"]]`).Do(c)
 		} else {
 			fmt.Println("Could not find the 'I Agree' button. Skipping.")
