@@ -82,9 +82,10 @@ func handleFreeGames(c context.Context, urls []string) {
 func getFreeGameURLs(ctx context.Context) (urls []string) {
 	chromedp.Run(ctx,
 		chromedp.Navigate("https://www.epicgames.com/store/en-US/free-games"),
-		chromedp.WaitVisible(`//a[@aria-label[contains(., "Free Games")]]`),
+
+		chromedp.WaitVisible(`//a[.//text()[starts-with(.,"Free Now")]]`),
 		chromedp.Sleep(time.Second*5),
-		chromedp.QueryAfter(`//a[@aria-label[contains(., "Free Games")]]`, func(ctx context.Context, bla runtime.ExecutionContextID, nodes ...*cdp.Node) error {
+		chromedp.QueryAfter(`//a[.//text()[starts-with(.,"Free Now")]]`, func(ctx context.Context, bla runtime.ExecutionContextID, nodes ...*cdp.Node) error {
 			if len(nodes) < 1 {
 				return errors.New("expected at least one node")
 			}
