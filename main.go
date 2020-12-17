@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/chromedp/cdproto/cdp"
+	l "github.com/chromedp/cdproto/log"
 	"github.com/chromedp/cdproto/network"
 	"github.com/chromedp/cdproto/runtime"
 	"github.com/chromedp/chromedp"
@@ -175,10 +176,14 @@ func setupLogger(ctx context.Context) {
 		go func() {
 			if e, ok := ev.(*runtime.EventConsoleAPICalled); ok {
 				for _, arg := range e.Args {
-					if e.Type == runtime.APITypeError && arg.Type != runtime.TypeUndefined {
-						fmt.Printf("%s\n", arg.Value)
+					if arg.Type != runtime.TypeUndefined {
+						// if e.Type == runtime.APITypeError && arg.Type != runtime.TypeUndefined {
+						fmt.Printf("Console Entry: %s\n", arg.Value)
 					}
 				}
+			}
+			if e, ok := ev.(*l.EventEntryAdded); ok {
+				fmt.Printf("Console Log Entry: %s\n", e.Entry.Text)
 			}
 		}()
 	})
