@@ -92,8 +92,13 @@ func getFreeGameURLs(ctx context.Context) (urls []string) {
 func getAccessibilityCookie(ctx context.Context) {
 	tries := 5
 	for _, link := range config.HCaptchaURLs {
-		chromedp.Navigate(link).Do(ctx)
-		chromedp.WaitEnabled(`//button[@data-cy='setAccessibilityCookie']`).Do(ctx)
+		for i := 0; i < tries; i++ {
+			fmt.Printf("Trying to get find hCaptcha cookie button... %d of %d\n", i+1, tries)
+			chromedp.Navigate(link).Do(ctx)
+			if err := doSlowCall(ctx, chromedp.WaitEnabled(`//button[@data-cy='setAccessibilityCookie']`), 5); err == nil {
+				break
+			}
+		}
 		for i := 0; i < tries; i++ {
 			fmt.Printf("Trying to get hCaptcha accessibility cookie... %d of %d\n", i+1, tries)
 			chromedp.Sleep(time.Millisecond * time.Duration(rand.Intn(2500)+2500)).Do(ctx)
