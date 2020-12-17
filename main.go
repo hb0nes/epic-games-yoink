@@ -118,7 +118,7 @@ func getAccessibilityCookie(ctx context.Context) {
 
 func getEpicStoreCookie(ctx context.Context) {
 	fmt.Println("Logging into Epic Games Store.")
-	tries := 5
+	tries := 10
 	chromedp.Run(ctx,
 		chromedp.Navigate(`https://www.epicgames.com/login`),
 		chromedp.WaitEnabled(`//div[@id='login-with-epic']`),
