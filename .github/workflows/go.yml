@@ -2,7 +2,7 @@ name: Go
 
 on:
   schedule:
-  - cron: '0 1/12 * * *'
+  - cron: '15 4/12 * * *'
   watch:
     types: [started]
 
