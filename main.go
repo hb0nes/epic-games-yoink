@@ -18,7 +18,7 @@ import (
 
 var config Config
 
-func doSlowCall(c context.Context, a chromedp.QueryAction, seconds time.Duration) error {
+func callWithTimeout(c context.Context, a chromedp.QueryAction, seconds time.Duration) error {
 	ctx, cancel := context.WithTimeout(c, time.Second*seconds)
 	defer cancel()
 	err := a.Do(ctx)
@@ -30,17 +30,17 @@ func handleFreeGames(c context.Context, urls []string) {
 	fmt.Printf("Handling %d games!\n", len(urls))
 	for _, url := range urls {
 		fmt.Printf("Checking URL: %s\n", url)
-		chromedp.Navigate(url).Do(c)
-		if err := doSlowCall(c, chromedp.WaitEnabled(`//button[text()[contains(.,"Continue")]]`), 5); err == nil {
-			doSlowCall(c, chromedp.Click(`//button[text()[contains(.,"Continue")]]`), 5)
+		callWithTimeout(c, chromedp.Navigate(url), 30)
+		if err := callWithTimeout(c, chromedp.WaitEnabled(`//button[text()[contains(.,"Continue")]]`), 5); err == nil {
+			callWithTimeout(c, chromedp.Click(`//button[text()[contains(.,"Continue")]]`), 5)
 		}
 		fmt.Println("Checking if already owned.")
-		if err := doSlowCall(c, chromedp.WaitVisible(`//button[./span[text()[contains(.,"Owned")]]]`), 1); err == nil {
+		if err := callWithTimeout(c, chromedp.WaitVisible(`//button[./span[text()[contains(.,"Owned")]]]`), 1); err == nil {
 			fmt.Println("Already owned. Skipping.")
 			continue
 		}
 		fmt.Println("Waiting for GET button")
-		if err := doSlowCall(c, chromedp.WaitEnabled(`//button[.//text()[contains(.,"Get")]]`), 5); err == nil {
+		if err := callWithTimeout(c, chromedp.WaitEnabled(`//button[.//text()[contains(.,"Get")]]`), 5); err == nil {
 			fmt.Println("Clicking GET button")
 			chromedp.Sleep(time.Second).Do(c)
 			chromedp.Click(`//button[.//text()[contains(.,"Get")]]`).Do(c)
@@ -49,7 +49,7 @@ func handleFreeGames(c context.Context, urls []string) {
 			continue
 		}
 		fmt.Println("Waiting for Place Order")
-		if err := doSlowCall(c, chromedp.WaitEnabled(`//button[./span[text()[contains(.,"Place Order")]]]`), 5); err == nil {
+		if err := callWithTimeout(c, chromedp.WaitEnabled(`//button[./span[text()[contains(.,"Place Order")]]]`), 5); err == nil {
 			fmt.Println("Clicking Place Order")
 			chromedp.Sleep(time.Second).Do(c)
 			chromedp.Click(`//button[./span[text()[contains(.,"Place Order")]]]`).Do(c)
@@ -58,7 +58,7 @@ func handleFreeGames(c context.Context, urls []string) {
 			continue
 		}
 		fmt.Println("Waiting for Agreement")
-		if err := doSlowCall(c, chromedp.WaitEnabled(`//button[span[text()="I Agree"]]`), 5); err == nil {
+		if err := callWithTimeout(c, chromedp.WaitEnabled(`//button[span[text()="I Agree"]]`), 5); err == nil {
 			fmt.Println("Clicking I Agree")
 			chromedp.Sleep(time.Second).Do(c)
 			chromedp.Click(`//button[span[text()="I Agree"]]`).Do(c)
@@ -66,7 +66,7 @@ func handleFreeGames(c context.Context, urls []string) {
 			fmt.Println("Could not find the 'I Agree' button. Skipping.")
 			continue
 		}
-		doSlowCall(c, chromedp.WaitEnabled(`//span[text()="Thank you for buying"]`), 5)
+		callWithTimeout(c, chromedp.WaitEnabled(`//span[text()="Thank you for buying"]`), 5)
 	}
 }
 
@@ -95,7 +95,7 @@ func getAccessibilityCookie(ctx context.Context) {
 		for i := 0; i < tries; i++ {
 			fmt.Printf("Trying to get find hCaptcha cookie button... %d of %d\n", i+1, tries)
 			chromedp.Navigate(link).Do(ctx)
-			if err := doSlowCall(ctx, chromedp.WaitEnabled(`//button[@data-cy='setAccessibilityCookie']`), 5); err == nil {
+			if err := callWithTimeout(ctx, chromedp.WaitEnabled(`//button[@data-cy='setAccessibilityCookie']`), 5); err == nil {
 				break
 			}
 		}
@@ -127,8 +127,8 @@ func getEpicStoreCookie(ctx context.Context) {
 	)
 	for i := 0; i < tries; i++ {
 		fmt.Printf("Trying to log in to Epic Games Store... %d of %d\n", i+1, tries)
-		if err := doSlowCall(ctx, chromedp.WaitEnabled(`//button[@id='sign-in']`), 5); err == nil {
-			doSlowCall(ctx, chromedp.Click(`//button[@id='sign-in']`), 2)
+		if err := callWithTimeout(ctx, chromedp.WaitEnabled(`//button[@id='sign-in']`), 5); err == nil {
+			callWithTimeout(ctx, chromedp.Click(`//button[@id='sign-in']`), 2)
 		}
 		chromedp.Sleep(time.Second).Do(ctx)
 		if _, epicStoreCookie := checkCookies(ctx); epicStoreCookie {
