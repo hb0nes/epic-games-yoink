@@ -116,21 +116,22 @@ func getAccessibilityCookie(ctx context.Context) {
 func getEpicStoreCookie(ctx context.Context) {
 	fmt.Println("Logging into Epic Games Store.")
 	tries := 10
-	chromedp.Run(ctx,
-		chromedp.Navigate(`https://www.epicgames.com/login`),
-		chromedp.WaitEnabled(`//div[@id='login-with-epic']`),
-		chromedp.Click(`//div[@id='login-with-epic']`),
-		chromedp.WaitEnabled(`//input[@id='email']`),
-		chromedp.SendKeys(`//input[@id='email']`, config.Username),
-		chromedp.WaitEnabled(`//input[@id='password']`),
-		chromedp.SendKeys(`//input[@id='password']`, config.Password),
-	)
 	for i := 0; i < tries; i++ {
 		fmt.Printf("Trying to log in to Epic Games Store... %d of %d\n", i+1, tries)
+		chromedp.Run(ctx,
+			chromedp.Navigate(`https://www.epicgames.com/login`),
+			chromedp.WaitEnabled(`//div[@id='login-with-epic']`),
+			chromedp.Click(`//div[@id='login-with-epic']`),
+			chromedp.WaitEnabled(`//input[@id='email']`),
+			chromedp.SendKeys(`//input[@id='email']`, config.Username),
+			chromedp.WaitEnabled(`//input[@id='password']`),
+			chromedp.SendKeys(`//input[@id='password']`, config.Password),
+		)
 		if err := callWithTimeout(ctx, chromedp.WaitEnabled(`//button[@id='sign-in']`), 5); err == nil {
 			callWithTimeout(ctx, chromedp.Click(`//button[@id='sign-in']`), 2)
 		}
-		chromedp.Sleep(time.Second).Do(ctx)
+		// Wait for 10 seconds to check if we're logged in
+		chromedp.Sleep(time.Second * 10).Do(ctx)
 		if _, epicStoreCookie := checkCookies(ctx); epicStoreCookie {
 			fmt.Println("Logged into Epic Games Store.")
 			return
