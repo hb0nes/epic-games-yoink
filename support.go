@@ -7,10 +7,18 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+// Config exposes config.yaml
 type Config struct {
 	HCaptchaURLs []string `yaml:"hCaptchaURLs"`
 	Username     string   `yaml:"username"`
 	Password     string   `yaml:"password"`
+	OTPSecret    string   `yaml:"OTPSecret"`
+}
+
+func handleErrorFatal(err error) {
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func readConfig() Config {

@@ -11,7 +11,8 @@ There are two methods of automatically adding all of these games, manual and aut
 - Go [here](https://dashboard.hcaptcha.com/signup?type=accessibility) and get an accessibility URL by filling in your e-mail. The mail that they send you contains a button.  
 Right click this button and get the URL, and insert that URL in config.yaml.example    
 This example file also shows what it should look like. If you want to use one key, remove the example so that you only have one entry left (your own key).  
-- Fill in your username & password as well, to be able to log into the Epic Games store.  
+- Fill in your email/username & password as well, to be able to log into the Epic Games store.  
+- When using 2FA, fill in the secret that is given during the 2FA setup or find some other way to retrieve the secret.
 - Rename config.yaml.example to config.yaml and make sure it is in the same directory as your executable.
 - Make sure you have Chrome installed, and run the program!  
 IMPORTANT - Epic Games Store only accepts e-mail, not your actual username, apparently.
@@ -23,6 +24,7 @@ There is no support for 2FA (yet).
   - hCaptchaURL
   - username
   - password
+  - OTPSecret
 - Enable [Git Actions](https://docs.github.com/en/free-pro-team@latest/actions/managing-workflow-runs/disabling-and-enabling-a-workflow) and enable the 'Go' workflow.
 - It will run twice per day, each day. Do not adjust the interval, hCaptcha has very strict ratelimits.  
 

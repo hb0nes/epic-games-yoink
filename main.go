@@ -14,6 +14,7 @@ import (
 	"github.com/chromedp/cdproto/network"
 	"github.com/chromedp/cdproto/runtime"
 	"github.com/chromedp/chromedp"
+	"github.com/pquerna/otp/totp"
 )
 
 var config Config
@@ -113,6 +114,33 @@ func getAccessibilityCookie(ctx context.Context) {
 	log.Fatal("Couldn't get accessibility cookie from hCaptcha, so cannot bypass captcha. Try again another time.")
 }
 
+func handle2FA(ctx context.Context) (success bool) {
+	// If OTP/2FA is enabled, fill in the code
+	err := callWithTimeout(ctx, chromedp.WaitEnabled(`//input[@id='code']`), 5)
+	if err == nil && len(config.OTPSecret) < 32 {
+		log.Fatal("It appears 2FA is enabled for this account but the OTP Secret hasn't been configured in the configuration.")
+	}
+	if err != nil {
+		return true
+	}
+	code, err := totp.GenerateCode(config.OTPSecret, time.Now())
+	fmt.Println("OTP Password is " + code)
+	if err != nil {
+		log.Fatal("OTPSecret configured but cannot derive code from it. Double check the config.")
+		return false
+	}
+	chromedp.SendKeys(`//input[@id='code']`, code).Do(ctx)
+	time.Sleep(time.Second)
+	err = callWithTimeout(ctx, chromedp.WaitEnabled(`//button[@id='continue']`), 5)
+	if err == nil {
+		chromedp.Click(`//button[@id='continue']`).Do(ctx)
+		log.Println("Clicked Continue button in 2FA process.")
+		return true
+	}
+	log.Println("Something went wrong inputting the 2FA code.")
+	return false
+}
+
 func getEpicStoreCookie(ctx context.Context) {
 	fmt.Println("Logging into Epic Games Store.")
 	tries := 10
@@ -129,6 +157,9 @@ func getEpicStoreCookie(ctx context.Context) {
 		)
 		if err := callWithTimeout(ctx, chromedp.WaitEnabled(`//button[@id='sign-in']`), 5); err == nil {
 			callWithTimeout(ctx, chromedp.Click(`//button[@id='sign-in']`), 2)
+		}
+		if success := handle2FA(ctx); !success {
+			continue
 		}
 		// Wait for 10 seconds to check if we're logged in
 		chromedp.Sleep(time.Second * 10).Do(ctx)

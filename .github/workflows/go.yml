@@ -43,6 +43,7 @@ jobs:
         sed -i 's|<hCAPTCHA_ACCESSIBILITY_URL>|${{ secrets.hCaptchaURL }}|' config.yaml
         sed -i 's|<EPIC_GAMES_STORE_USERNAME>|${{ secrets.username }}|' config.yaml
         sed -i 's|<EPIC_GAMES_STORE_PASSWORD>|${{ secrets.password }}|' config.yaml
+        sed -i 's|<EPIC_GAMES_STORE_OTPSECRET>|${{ secrets.OTPSecret }}|' config.yaml
     
     - name: Run with XVFB
       uses: GabrielBB/xvfb-action@v1.4
