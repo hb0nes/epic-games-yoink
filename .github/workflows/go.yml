@@ -30,8 +30,8 @@ jobs:
             dep ensure
         fi
         
-    - name: Where are we?
-      run: pwd && ls -lrth
+    - name: Runner Information
+      run: pwd; ls -lrth; id; whoami
 
     - name: Build
       run: go build -o games-yeeter-2000 -v ./... 
