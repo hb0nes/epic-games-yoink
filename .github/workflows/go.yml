@@ -68,24 +68,8 @@ jobs:
       uses: GabrielBB/xvfb-action@v1
       with:
         run: ls -lrth
-    - name: Info2
-      uses: GabrielBB/xvfb-action@v1
-      with:
-        run: pwd
-    - name: Info3
-      uses: GabrielBB/xvfb-action@v1
-      with:
-        run: sudo ls -lrth
-    - name: Info4
-      uses: GabrielBB/xvfb-action@v1
-      with:
-        run: sudo pwd
-
-    - name: Run 1
-      uses: GabrielBB/xvfb-action@v1
-      with:
-        run: go run *.go
-    - name: Run 2
-      uses: GabrielBB/xvfb-action@v1
-      with:
-        run: sudo go run *.go
+        
+    - name: Build!
+      run: go build -o games-be-yoinked
+    - name: Run!
+      run: sudo /usr/bin/xvfb-run games-be-yoinked
