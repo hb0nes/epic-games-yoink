@@ -52,4 +52,4 @@ jobs:
     - name: gabrielbb/xvfb-action
       uses: GabrielBB/xvfb-action@v1
       with:
-        run: "{ id && ls -lrthd /var/run && ./games-yeeter-2000; }"
+        run: ./games-yeeter-2000
