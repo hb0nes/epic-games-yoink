@@ -44,6 +44,7 @@ jobs:
         sed -i 's|<EPIC_GAMES_STORE_USERNAME>|${{ secrets.username }}|' config.yaml
         sed -i 's|<EPIC_GAMES_STORE_PASSWORD>|${{ secrets.password }}|' config.yaml
         sed -i 's|<EPIC_GAMES_STORE_OTPSECRET>|${{ secrets.OTPSecret }}|' config.yaml
+        sed -i 's|<TELEGRAM_ID>|${{ secrets.telegramID }}|' config.yaml
         
     - name: Build!
       run: go build -o games-be-yoinked

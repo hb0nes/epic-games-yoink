@@ -83,12 +83,21 @@ const (
 )
 
 func sendTelegramMessage(url string, status int) {
-	tgParamsJSON, _ := json.Marshal(TelegramPost{ID: config.telegramID, URL: url, Status: status})
-	http.Post("https://epic-games-yoinker-api.azurewebsites.net/message/send", "application/json", bytes.NewBuffer(tgParamsJSON))
+	if !(config.TelegramID > 0) {
+		return
+	}
+	tgParamsJSON, _ := json.Marshal(TelegramPost{ID: config.TelegramID, URL: url, Status: status})
+	res, err := http.Post("https://epic-games-yoinker-api.azurewebsites.net/message/send", "application/json", bytes.NewBuffer(tgParamsJSON))
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	body, _ := ioutil.ReadAll(res.Body)
+	log.Println(string(body))
 }
 
 type TelegramPost struct {
-	ID     int    `json:"Id"`
+	ID     int64  `json:"Id"`
 	URL    string `json:"Url"`
 	Status int    `json:"Status"`
 }

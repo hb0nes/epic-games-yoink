@@ -4,3 +4,4 @@ hCaptchaURLs:
 username: "<EPIC_GAMES_STORE_USERNAME>"
 password: "<EPIC_GAMES_STORE_PASSWORD>"
 OTPSecret: "<EPIC_GAMES_STORE_OTPSECRET>"
+telegramID: "<TELEGRAM_ID>"
