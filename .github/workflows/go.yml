@@ -48,7 +48,9 @@ jobs:
     - name: "Set permissions"
       run: |
         sudo chmod 777 /etc/profile.d/env_vars.sh
-        sudo chmod 777 /run/user/0
+        sudo chmod -R 777 /run/user
+        sudo umask 000
+        umask 000
     
     - name: Run with XVFB
       uses: GabrielBB/xvfb-action@v1.4
