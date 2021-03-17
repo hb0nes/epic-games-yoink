@@ -1,12 +1,15 @@
 package main
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"math/rand"
+	"net/http"
 	"time"
 
 	"github.com/chromedp/cdproto/cdp"
@@ -26,7 +29,6 @@ func callWithTimeout(c context.Context, a chromedp.QueryAction, seconds time.Dur
 	return err
 }
 
-// func handleFreeGames(c context.Context, nodes []*cdp.Node) {
 func handleFreeGames(c context.Context, urls []string) {
 	fmt.Printf("Handling %d games!\n", len(urls))
 	for _, url := range urls {
@@ -47,6 +49,7 @@ func handleFreeGames(c context.Context, urls []string) {
 			chromedp.Click(`//button[.//text()[contains(.,"Get")]]`).Do(c)
 		} else {
 			fmt.Println("Could not find the GET button. Skipping.")
+			sendTelegramMessage(url, yoinkFailure)
 			continue
 		}
 		fmt.Println("Waiting for Place Order")
@@ -56,6 +59,7 @@ func handleFreeGames(c context.Context, urls []string) {
 			chromedp.Click(`//button[./span[text()[contains(.,"Place Order")]]]`).Do(c)
 		} else {
 			fmt.Println("Could not find the Place Order button. Skipping.")
+			sendTelegramMessage(url, yoinkFailure)
 			continue
 		}
 		fmt.Println("Waiting for Agreement")
@@ -63,22 +67,40 @@ func handleFreeGames(c context.Context, urls []string) {
 			fmt.Println("Clicking I Agree")
 			chromedp.Sleep(time.Second).Do(c)
 			chromedp.Click(`//button[span[text()="I Agree"]]`).Do(c)
+			sendTelegramMessage(url, yoinkSuccess)
 		} else {
 			fmt.Println("Could not find the 'I Agree' button. Skipping.")
+			sendTelegramMessage(url, yoinkFailure)
 			continue
 		}
 		callWithTimeout(c, chromedp.WaitEnabled(`//span[text()="Thank you for buying"]`), 5)
 	}
 }
 
+const (
+	yoinkSuccess = iota
+	yoinkFailure = iota
+)
+
+func sendTelegramMessage(url string, status int) {
+	tgParamsJSON, _ := json.Marshal(TelegramPost{ID: config.telegramID, URL: url, Status: status})
+	http.Post("https://epic-games-yoinker-api.azurewebsites.net/message/send", "application/json", bytes.NewBuffer(tgParamsJSON))
+}
+
+type TelegramPost struct {
+	ID     int    `json:"Id"`
+	URL    string `json:"Url"`
+	Status int    `json:"Status"`
+}
+
 func getFreeGameURLs(ctx context.Context) (urls []string) {
 	chromedp.Run(ctx,
 		chromedp.Navigate("https://www.epicgames.com/store/en-US/free-games"),
-
 		chromedp.WaitVisible(`//a[.//text()[starts-with(.,"Free Now")]]`),
 		chromedp.Sleep(time.Second*5),
 		chromedp.QueryAfter(`//a[.//text()[starts-with(.,"Free Now")]]`, func(ctx context.Context, bla runtime.ExecutionContextID, nodes ...*cdp.Node) error {
 			if len(nodes) < 1 {
+				sendTelegramMessage("Couldn't find a free game...", yoinkFailure)
 				return errors.New("expected at least one node")
 			}
 			for _, node := range nodes {
@@ -111,6 +133,7 @@ func getAccessibilityCookie(ctx context.Context) {
 			}
 		}
 	}
+	sendTelegramMessage("Couldn't get hCaptcha cookie...", yoinkFailure)
 	log.Fatal("Couldn't get accessibility cookie from hCaptcha, so cannot bypass captcha. Try again another time.")
 }
 
@@ -168,6 +191,7 @@ func getEpicStoreCookie(ctx context.Context) {
 			return
 		}
 	}
+	sendTelegramMessage("Couldn't login to Epic Games store...", yoinkFailure)
 	log.Fatal("Apparently, logging in is not successful. Too bad.")
 }
 
