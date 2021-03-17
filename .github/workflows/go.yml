@@ -11,10 +11,28 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:  
-    - name: "Set permissions"
-      run: |
-        sudo chmod 777 /etc/profile.d/env_vars.sh
-        sudo chmod -R 777 /run/user
+    
+    - name: gabrielbb/xvfb-action
+      uses: GabrielBB/xvfb-action@v1
+      with:
+        run: id
+    - name: gabrielbb/xvfb-action
+      uses: GabrielBB/xvfb-action@v1
+      with:
+        run: ls -lrth
+    - name: gabrielbb/xvfb-action
+      uses: GabrielBB/xvfb-action@v1
+      with:
+        run: ls -lrth /var/run
+    - name: gabrielbb/xvfb-action
+      uses: GabrielBB/xvfb-action@v1
+      with:
+        run: sudo id
+    - name: gabrielbb/xvfb-action
+      uses: GabrielBB/xvfb-action@v1
+      with:
+        run: sudo ls -lrth /var/run
+    
     - name: Download & Install Chrome
       run: sudo apt update && sudo apt install -y google-chrome-stable
 
