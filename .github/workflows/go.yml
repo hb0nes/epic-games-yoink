@@ -9,7 +9,7 @@ on:
 jobs:
   build:
     name: Build
-    runs-on: debian-latest
+    runs-on: ubuntu-18.04
     steps:  
    
     - name: Download & Install Chrome
