@@ -116,9 +116,6 @@ func getAccessibilityCookie(ctx context.Context) {
 
 func handle2FA(ctx context.Context) (success bool) {
 	// If OTP/2FA is enabled, fill in the code
-	// TODO
-	fmt.Println("waiting...")
-	time.Sleep(time.Hour)
 	err := callWithTimeout(ctx, chromedp.WaitEnabled(`//input[@id='code']`), 5)
 	if err == nil && len(config.OTPSecret) < 32 {
 		log.Fatal("It appears 2FA is enabled for this account but the OTP Secret hasn't been configured in the configuration.")
@@ -142,12 +139,6 @@ func handle2FA(ctx context.Context) (success bool) {
 	}
 	log.Println("Something went wrong inputting the 2FA code.")
 	return false
-}
-
-func handleAudioChallenge(ctx context.Context) {
-	chromedp.Run(ctx,
-		chromedp.Click(`//a[@class="audioBtn metaTooltipRight"]`),
-	)
 }
 
 func getEpicStoreCookie(ctx context.Context) {
