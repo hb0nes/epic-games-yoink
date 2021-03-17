@@ -51,4 +51,4 @@ jobs:
     - name: Build!
       run: go build -o games-be-yoinked
     - name: Run!
-      run: sudo /usr/bin/xvfb-run games-be-yoinked
+      run: sudo /usr/bin/xvfb-run ./games-be-yoinked
