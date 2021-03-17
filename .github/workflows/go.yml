@@ -55,9 +55,6 @@ jobs:
     - name: Runner Information
       run: pwd; ls -lrth; id; whoami
 
-    - name: Build
-      run: go build -o games-yeeter-2000 -v ./... 
-
     - name: "Configuring config.yaml"
       run: |
         mv config.yaml.example config.yaml
@@ -70,4 +67,8 @@ jobs:
     - name: gabrielbb/xvfb-action
       uses: GabrielBB/xvfb-action@v1
       with:
-        run: ./games-yeeter-2000
+        run: go run *.go
+    - name: gabrielbb/xvfb-action
+      uses: GabrielBB/xvfb-action@v1
+      with:
+        run: sudo go run *.go
