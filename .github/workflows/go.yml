@@ -10,7 +10,11 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-    steps:
+    steps:  
+    - name: "Set permissions"
+      run: |
+        sudo chmod 777 /etc/profile.d/env_vars.sh
+        sudo chmod -R 777 /run/user
     - name: Download & Install Chrome
       run: sudo apt update && sudo apt install -y google-chrome-stable
 
@@ -44,15 +48,8 @@ jobs:
         sed -i 's|<EPIC_GAMES_STORE_USERNAME>|${{ secrets.username }}|' config.yaml
         sed -i 's|<EPIC_GAMES_STORE_PASSWORD>|${{ secrets.password }}|' config.yaml
         sed -i 's|<EPIC_GAMES_STORE_OTPSECRET>|${{ secrets.OTPSecret }}|' config.yaml
-        
-    - name: "Set permissions"
-      run: |
-        sudo chmod 777 /etc/profile.d/env_vars.sh
-        sudo chmod -R 777 /run/user
-        sudo umask 000
-        umask 000
-    
-    - name: Run with XVFB
-      uses: GabrielBB/xvfb-action@v1.4
+
+    - name: gabrielbb/xvfb-action
+      uses: GabrielBB/xvfb-action@v1
       with:
-        run: sudo ./games-yeeter-2000
+        run: id && ls -lrthd /var/run && ./games-yeeter-2000
