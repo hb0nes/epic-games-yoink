@@ -9,14 +9,9 @@ on:
 jobs:
   build:
     name: Build
-    runs-on: ubuntu-latest
+    runs-on: debian-latest
     steps:  
-    
-    - name: gabrielbb/xvfb-action
-      uses: GabrielBB/xvfb-action@v1
-      with:
-        run: id
-    
+   
     - name: Download & Install Chrome
       run: sudo apt update && sudo apt install -y google-chrome-stable
 
@@ -50,5 +45,8 @@ jobs:
         
     - name: Build!
       run: go build -o games-be-yoinked
-    - name: Run!
-      run: sudo /usr/bin/xvfb-run ./games-be-yoinked
+      
+    - name: Run! 
+      uses: GabrielBB/xvfb-action@v1
+      with:
+        run: ./games-be-yoinked
