@@ -32,9 +32,6 @@ jobs:
             curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
             dep ensure
         fi
-        
-    - name: Runner Information
-      run: pwd; ls -lrth; id; whoami
 
     - name: "Configuring config.yaml"
       run: |
@@ -48,6 +45,9 @@ jobs:
         
     - name: Build!
       run: go build -o games-be-yoinked
+      
+    - name: Information
+      run: pwd; ls -lrth; id; whoami; cat ./config.yaml
       
     - name: Run! 
       uses: GabrielBB/xvfb-action@v1
