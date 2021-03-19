@@ -83,7 +83,7 @@ const (
 )
 
 func sendTelegramMessage(url string, status int) {
-	if !(config.TelegramID > 0) {
+	if !(len(config.TelegramID) > 0) {
 		return
 	}
 	tgParamsJSON, _ := json.Marshal(TelegramPost{ID: config.TelegramID, URL: url, Status: status})
@@ -97,7 +97,7 @@ func sendTelegramMessage(url string, status int) {
 }
 
 type TelegramPost struct {
-	ID     int64  `json:"Id"`
+	ID     string `json:"Id"`
 	URL    string `json:"Url"`
 	Status int    `json:"Status"`
 }

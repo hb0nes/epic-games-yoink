@@ -13,7 +13,7 @@ type Config struct {
 	Username     string   `yaml:"username"`
 	Password     string   `yaml:"password"`
 	OTPSecret    string   `yaml:"OTPSecret"`
-	TelegramID   int64    `yaml:"telegramID"`
+	TelegramID   string   `yaml:"telegramID"`
 }
 
 func handleErrorFatal(err error) {
