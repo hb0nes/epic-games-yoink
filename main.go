@@ -278,6 +278,10 @@ func setCookies(ctx context.Context) {
 			Expires: &expiryTime,
 		},
 	}
+	if err := callWithTimeout(ctx, chromedp.WaitEnabled(`//button[contains(@class, "onetrust-lg")]`), 5); err == nil {
+		fmt.Println("Removed stoopid cookiebanner.")
+		chromedp.Click(`//button[contains(@class, "onetrust-lg")]`).Do(ctx)
+	}
 	network.SetCookies(cookies).Do(ctx)
 }
 
