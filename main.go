@@ -178,17 +178,33 @@ func getEpicStoreCookie(ctx context.Context) {
 	tries := 10
 	for i := 0; i < tries; i++ {
 		fmt.Printf("Trying to log in to Epic Games Store... %d of %d\n", i+1, tries)
-		chromedp.Run(ctx,
-			chromedp.Navigate(`https://www.epicgames.com/login`),
-			chromedp.WaitEnabled(`//div[@id='login-with-epic']`),
-			chromedp.Click(`//div[@id='login-with-epic']`),
-			chromedp.WaitEnabled(`//input[@id='email']`),
-			chromedp.SendKeys(`//input[@id='email']`, config.Username),
-			chromedp.WaitEnabled(`//input[@id='password']`),
-			chromedp.SendKeys(`//input[@id='password']`, config.Password),
-		)
+		if err := callWithTimeout(ctx, chromedp.Navigate(`https://www.epicgames.com/login`), 10); err != nil {
+			log.Println("Couldnt navigate to login page.")
+			continue
+		}
+		if err := callWithTimeout(ctx, chromedp.WaitEnabled(`//div[@id='login-with-epic']`), 10); err == nil {
+			callWithTimeout(ctx, chromedp.Click(`//div[@id='login-with-epic']`), 2)
+		} else {
+			log.Println("Could not find login button.")
+			continue
+		}
+		if err := callWithTimeout(ctx, chromedp.WaitEnabled(`//input[@id='email']`), 5); err == nil {
+			chromedp.SendKeys(`//input[@id='email']`, config.Username).Do(ctx)
+		} else {
+			log.Println("Could not find email field.")
+			continue
+		}
+		if err := callWithTimeout(ctx, chromedp.WaitEnabled(`//input[@id='password']`), 10); err == nil {
+			chromedp.SendKeys(`//input[@id='password']`, config.Password).Do(ctx)
+		} else {
+			log.Println("Could not find password field.")
+			continue
+		}
 		if err := callWithTimeout(ctx, chromedp.WaitEnabled(`//button[@id='sign-in']`), 5); err == nil {
 			callWithTimeout(ctx, chromedp.Click(`//button[@id='sign-in']`), 2)
+		} else {
+			log.Print("Could not find sign in button.")
+			continue
 		}
 		if success := handle2FA(ctx); !success {
 			continue
