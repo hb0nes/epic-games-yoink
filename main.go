@@ -10,6 +10,7 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/chromedp/cdproto/cdp"
@@ -18,6 +19,8 @@ import (
 	"github.com/chromedp/cdproto/runtime"
 	"github.com/chromedp/chromedp"
 	"github.com/pquerna/otp/totp"
+
+	img "cdp/imgur"
 )
 
 var config Config
@@ -182,6 +185,7 @@ func getEpicStoreCookie(ctx context.Context) {
 			log.Println("Couldnt navigate to login page.")
 			continue
 		}
+		continue
 		if err := callWithTimeout(ctx, chromedp.WaitEnabled(`//input[@id='email']`), 5); err == nil {
 			chromedp.SendKeys(`//input[@id='email']`, config.Username).Do(ctx)
 		} else {
@@ -211,6 +215,10 @@ func getEpicStoreCookie(ctx context.Context) {
 		}
 	}
 	sendTelegramMessage("Couldn't login to Epic Games store...", yoinkFailure)
+	time.Sleep(time.Second * 5)
+	if len(config.ImgurClientID) > 0 {
+		log.Printf("Link to screenshot: %s", screenshot(ctx))
+	}
 	log.Fatal("Apparently, logging in is not successful. Too bad.")
 }
 
@@ -238,7 +246,7 @@ func getCookies(ctx context.Context) {
 	}
 	if !accessibilityCookie {
 		fmt.Println("Need to bypass hCaptcha to login to Epic Games Store.")
-		getAccessibilityCookie(ctx)
+		// getAccessibilityCookie(ctx)
 	}
 	getEpicStoreCookie(ctx)
 }
@@ -279,6 +287,21 @@ func setCookies(ctx context.Context) {
 	network.SetCookies(cookies).Do(ctx)
 }
 
+func screenshot(ctx context.Context) string {
+	var buf []byte
+	chromedp.CaptureScreenshot(&buf).Do(ctx)
+	if err := ioutil.WriteFile("screenshot.png", buf, os.FileMode(0755)); err != nil {
+		log.Println("Screenshot failed.")
+		return ""
+	}
+	url, err := img.Upload("screenshot.png")
+	if err != nil {
+		log.Println(err)
+		return ""
+	}
+	return url
+}
+
 func main() {
 	config = readConfig()
 	dir, err := ioutil.TempDir("", "free-game-fetcher-2000")
@@ -301,6 +324,10 @@ func main() {
 	defer cancel()
 	if err := chromedp.Run(taskCtx); err != nil {
 		log.Fatalf("Could not start Chrome?\n%s\n", err)
+	}
+	// Authenticate for imgur to be able to create an image
+	if len(config.ImgurClientID) > 0 {
+		img.Authenticate(config.ImgurClientID, config.ImgurSecret, config.ImgurRefreshToken)
 	}
 	if err := chromedp.Run(taskCtx,
 		chromedp.ActionFunc(func(ctx context.Context) error {

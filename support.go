@@ -9,11 +9,14 @@ import (
 
 // Config exposes config.yaml
 type Config struct {
-	HCaptchaURLs []string `yaml:"hCaptchaURLs"`
-	Username     string   `yaml:"username"`
-	Password     string   `yaml:"password"`
-	OTPSecret    string   `yaml:"OTPSecret"`
-	TelegramID   string   `yaml:"telegramID"`
+	HCaptchaURLs      []string `yaml:"hCaptchaURLs"`
+	Username          string   `yaml:"username"`
+	Password          string   `yaml:"password"`
+	OTPSecret         string   `yaml:"OTPSecret"`
+	TelegramID        string   `yaml:"telegramID"`
+	ImgurClientID     string   `yaml:"imgurClientID"`
+	ImgurSecret       string   `yaml:"imgurSecret"`
+	ImgurRefreshToken string   `yaml:"imgurRefreshToken"`
 }
 
 func handleErrorFatal(err error) {
