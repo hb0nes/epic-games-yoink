@@ -185,7 +185,6 @@ func getEpicStoreCookie(ctx context.Context) {
 			log.Println("Couldnt navigate to login page.")
 			continue
 		}
-		continue
 		if err := callWithTimeout(ctx, chromedp.WaitEnabled(`//input[@id='email']`), 5); err == nil {
 			chromedp.SendKeys(`//input[@id='email']`, config.Username).Do(ctx)
 		} else {
