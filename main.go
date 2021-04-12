@@ -214,11 +214,14 @@ func getEpicStoreCookie(ctx context.Context) {
 			return
 		}
 	}
+	log.Fatal("Apparently, logging in is not successful. Too bad.")
 	time.Sleep(time.Second * 5)
 	if len(config.ImgurClientID) > 0 {
 		log.Printf("Link to screenshot: %s", screenshot(ctx))
 	}
-	log.Fatal("Apparently, logging in is not successful. Too bad.")
+	var nodes []*cdp.Node
+	chromedp.Nodes(`document`, &nodes, chromedp.ByJSPath)
+	log.Print(nodes[0].Dump("  ", "  ", false))
 }
 
 func checkCookies(ctx context.Context) (accessibilityCookie bool, epicCookie bool) {
