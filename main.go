@@ -179,7 +179,7 @@ func handle2FA(ctx context.Context) (success bool) {
 
 func getEpicStoreCookie(ctx context.Context) {
 	fmt.Println("Logging into Epic Games Store.")
-	tries := 10
+	tries := 3
 	for i := 0; i < tries; i++ {
 		fmt.Printf("Trying to log in to Epic Games Store... %d of %d\n", i+1, tries)
 		if err := callWithTimeout(ctx, chromedp.Navigate(`https://www.epicgames.com/id/login/epic`), 10); err != nil {
@@ -216,12 +216,14 @@ func getEpicStoreCookie(ctx context.Context) {
 	}
 	log.Println("Apparently, logging in is not successful. Too bad.")
 	time.Sleep(time.Second * 1)
+	var outer string
+	fmt.Println("Dumping DOM...")
+	chromedp.OuterHTML("//html", &outer).Do(ctx)
+	fmt.Println(outer)
 	if len(config.ImgurClientID) > 0 {
 		log.Printf("Link to screenshot: %s", screenshot(ctx))
 	}
-	var nodes []*cdp.Node
-	chromedp.Nodes(`document`, &nodes, chromedp.ByJSPath)
-	log.Print(nodes[0].Dump("  ", "  ", false))
+	log.Fatal("Exiting.")
 }
 
 func checkCookies(ctx context.Context) (accessibilityCookie bool, epicCookie bool) {
