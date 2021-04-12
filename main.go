@@ -178,14 +178,8 @@ func getEpicStoreCookie(ctx context.Context) {
 	tries := 10
 	for i := 0; i < tries; i++ {
 		fmt.Printf("Trying to log in to Epic Games Store... %d of %d\n", i+1, tries)
-		if err := callWithTimeout(ctx, chromedp.Navigate(`https://www.epicgames.com/login`), 10); err != nil {
+		if err := callWithTimeout(ctx, chromedp.Navigate(`https://www.epicgames.com/id/login/epic`), 10); err != nil {
 			log.Println("Couldnt navigate to login page.")
-			continue
-		}
-		if err := callWithTimeout(ctx, chromedp.WaitEnabled(`//div[@id='login-with-epic']`), 10); err == nil {
-			callWithTimeout(ctx, chromedp.Click(`//div[@id='login-with-epic']`), 2)
-		} else {
-			log.Println("Could not find login button.")
 			continue
 		}
 		if err := callWithTimeout(ctx, chromedp.WaitEnabled(`//input[@id='email']`), 5); err == nil {
