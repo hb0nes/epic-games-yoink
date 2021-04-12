@@ -11,6 +11,7 @@ import (
 	"math/rand"
 	"net/http"
 	"os"
+	"os/exec"
 	"time"
 
 	"github.com/chromedp/cdproto/cdp"
@@ -213,7 +214,6 @@ func getEpicStoreCookie(ctx context.Context) {
 			return
 		}
 	}
-	sendTelegramMessage("Couldn't login to Epic Games store...", yoinkFailure)
 	time.Sleep(time.Second * 5)
 	if len(config.ImgurClientID) > 0 {
 		log.Printf("Link to screenshot: %s", screenshot(ctx))
@@ -287,13 +287,22 @@ func setCookies(ctx context.Context) {
 }
 
 func screenshot(ctx context.Context) string {
-	var buf []byte
-	chromedp.CaptureScreenshot(&buf).Do(ctx)
-	if err := ioutil.WriteFile("screenshot.png", buf, os.FileMode(0755)); err != nil {
-		log.Println("Screenshot failed.")
-		return ""
+	// var buf []byte
+	// chromedp.CaptureScreenshot(&buf).Do(ctx)
+	// if err := ioutil.WriteFile(screenshotName, buf, os.FileMode(0755)); err != nil {
+	// log.Println("Screenshot failed.")
+	// return ""
+	// }
+	screenshotName := "screenshot.png"
+	cmd := exec.Command("/usr/bin/scrot", screenshotName)
+	cmd.Env = append(os.Environ(),
+		"DISPLAY=:99",
+	)
+	err := cmd.Run()
+	if err != nil {
+		log.Printf("Screenshotting failed: %s", err)
 	}
-	url, err := img.Upload("screenshot.png")
+	url, err := img.Upload(screenshotName)
 	if err != nil {
 		log.Println(err)
 		return ""
