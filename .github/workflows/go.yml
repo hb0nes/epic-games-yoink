@@ -13,7 +13,7 @@ jobs:
     steps:  
    
     - name: Download & Install Chrome
-      run: sudo apt update && sudo apt install -y google-chrome-stable
+      run: sudo apt update && sudo apt install -y google-chrome-stable scrot xvfb
 
     - name: Set up Go 1.x
       uses: actions/setup-go@v2
@@ -53,6 +53,7 @@ jobs:
       run: pwd; ls -lrth; id; whoami; cat ./config.yaml
       
     - name: Run! 
-      uses: GabrielBB/xvfb-action@v1
-      with:
-        run: ./games-be-yoinked
+      run: Xvfb :99 & DISPLAY=:99 ./games-be-yoinked
+#       uses: GabrielBB/xvfb-action@v1
+#       with:
+#         run: ./games-be-yoinked
