@@ -214,8 +214,8 @@ func getEpicStoreCookie(ctx context.Context) {
 			return
 		}
 	}
-	log.Fatal("Apparently, logging in is not successful. Too bad.")
-	time.Sleep(time.Second * 5)
+	log.Println("Apparently, logging in is not successful. Too bad.")
+	time.Sleep(time.Second * 1)
 	if len(config.ImgurClientID) > 0 {
 		log.Printf("Link to screenshot: %s", screenshot(ctx))
 	}
