@@ -42,6 +42,9 @@ jobs:
         sed -i 's|<EPIC_GAMES_STORE_PASSWORD>|${{ secrets.password }}|' config.yaml
         sed -i 's|<EPIC_GAMES_STORE_OTPSECRET>|${{ secrets.OTPSecret }}|' config.yaml
         sed -i 's|<TELEGRAM_ID>|${{ secrets.telegramID }}|' config.yaml
+        sed -i 's|<IMGUR_CLIENT_ID>|${{ secrets.IMGUR_CLIENT_ID }}|' config.yaml
+        sed -i 's|<IMGUR_SECRET>|${{ secrets.IMGUR_SECRET }}|' config.yaml
+        sed -i 's|<IMGUR_REFRESH_TOKEN>|${{ secrets.IMGUR_REFRESH_TOKEN }}|' config.yaml
         
     - name: Build!
       run: go build -o games-be-yoinked
