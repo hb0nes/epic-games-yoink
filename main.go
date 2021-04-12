@@ -186,19 +186,19 @@ func getEpicStoreCookie(ctx context.Context) {
 			log.Println("Couldnt navigate to login page.")
 			continue
 		}
-		if err := callWithTimeout(ctx, chromedp.WaitEnabled(`//input[@id='email']`), 5); err == nil {
+		if err := callWithTimeout(ctx, chromedp.WaitEnabled(`//input[@id='email']`), 20); err == nil {
 			chromedp.SendKeys(`//input[@id='email']`, config.Username).Do(ctx)
 		} else {
 			log.Println("Could not find email field.")
 			continue
 		}
-		if err := callWithTimeout(ctx, chromedp.WaitEnabled(`//input[@id='password']`), 10); err == nil {
+		if err := callWithTimeout(ctx, chromedp.WaitEnabled(`//input[@id='password']`), 20); err == nil {
 			chromedp.SendKeys(`//input[@id='password']`, config.Password).Do(ctx)
 		} else {
 			log.Println("Could not find password field.")
 			continue
 		}
-		if err := callWithTimeout(ctx, chromedp.WaitEnabled(`//button[@id='sign-in']`), 5); err == nil {
+		if err := callWithTimeout(ctx, chromedp.WaitEnabled(`//button[@id='sign-in']`), 20); err == nil {
 			callWithTimeout(ctx, chromedp.Click(`//button[@id='sign-in']`), 2)
 		} else {
 			log.Print("Could not find sign in button.")
@@ -215,7 +215,7 @@ func getEpicStoreCookie(ctx context.Context) {
 		}
 	}
 	log.Println("Apparently, logging in is not successful. Too bad.")
-	time.Sleep(time.Second * 1)
+	time.Sleep(time.Second * 5)
 	var outer string
 	fmt.Println("Dumping DOM...")
 	chromedp.OuterHTML("//html", &outer).Do(ctx)
@@ -327,7 +327,7 @@ func main() {
 		chromedp.NoDefaultBrowserCheck,
 		chromedp.UserDataDir(dir),
 		chromedp.DisableGPU,
-		chromedp.Flag("disable-popup-blocking", true),
+		// chromedp.Flag("disable-popup-blocking", true),
 		chromedp.Flag("start-maximized", true),
 		chromedp.Flag("disable-blink-features", "AutomationControlled"),
 	}
