@@ -7,11 +7,14 @@ There are two methods of automatically adding all of these games, manual and aut
 ## Automatic
 - [Fork](https://github.com/hb0nes/epic-store-free-games-snatcher/fork)  this repository
 - Add three or more GitHub secrets:
-  - hCaptchaURL
-  - username
-  - password
-  - OTPSecret
-  - telegramID - You can get your telegramID by sending a message to @EpicGamesYoinkBot
+  - hCaptchaURL - Mandatory
+  - username - Mandatory
+  - password - Mandatory
+  - OTPSecret - Optional - For 2FA
+  - telegramID - Optional - Get notifications. You can get your telegramID by sending a message to @EpicGamesYoinkBot
+  - IMGUR_CLIENT_ID - Optional - In case you want to see screenshot URLs in the logs, you can insert your own imgur api credentials, but it isn't necessary
+  - IMGUR_SECRET - Optional
+  - IMGUR_REFRESH_TOKEN - Optional
 - Enable [Git Actions](https://docs.github.com/en/free-pro-team@latest/actions/managing-workflow-runs/disabling-and-enabling-a-workflow) and enable the 'Go' workflow.
 - It will run twice per day, each day. Do not adjust the interval, hCaptcha has very strict ratelimits.  
 ## Manual - I would seriously just go for Automatic...
