@@ -53,7 +53,7 @@ jobs:
       run: pwd; ls -lrth; id; whoami; cat ./config.yaml
       
     - name: Run! 
-      run: Xvfb :99 -screen 0 1920x1080x24 & DISPLAY=:99 ./games-be-yoinked
+      run: Xvfb :99 -screen 0 1024x768x16 & DISPLAY=:99 ./games-be-yoinked
 #       uses: GabrielBB/xvfb-action@v1
 #       with:
 #         run: ./games-be-yoinked
