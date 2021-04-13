@@ -29,4 +29,4 @@ jobs:
         sed -i 's|<IMGUR_REFRESH_TOKEN>|${{ secrets.IMGUR_REFRESH_TOKEN }}|' config.yaml
         
     - name: Run Docker container
-      run:  docker run -v ${PWD}/config.yaml:/go/yoink/config.yaml --network host b0nes/epic-games-yoinker:latest
+      run:  docker run -v ${PWD}/config.yaml:/go/yoink/config.yaml b0nes/epic-games-yoinker:latest
