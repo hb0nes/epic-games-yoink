@@ -326,10 +326,10 @@ func main() {
 		chromedp.NoFirstRun,
 		chromedp.NoDefaultBrowserCheck,
 		chromedp.UserDataDir(dir),
-		// chromedp.DisableGPU,
-		// chromedp.Flag("disable-popup-blocking", true),
+		chromedp.DisableGPU,
+		chromedp.Flag("disable-popup-blocking", true),
 		chromedp.Flag("start-maximized", true),
-		chromedp.Flag("disable-blink-features", "AutomationControlled"),
+		// chromedp.Flag("disable-blink-features", "AutomationControlled"),
 	}
 	allocCtx, cancel := chromedp.NewExecAllocator(context.Background(), opts...)
 	defer cancel()
@@ -346,7 +346,7 @@ func main() {
 		chromedp.ActionFunc(func(ctx context.Context) error {
 			setupLogger(ctx)
 			getCookies(ctx)
-			// setCookies(ctx)
+			setCookies(ctx)
 			handleFreeGames(ctx, getFreeGameURLs(ctx))
 			fmt.Println("Done!")
 			return nil
