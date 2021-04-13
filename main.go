@@ -250,7 +250,7 @@ func getCookies(ctx context.Context) {
 	}
 	if !accessibilityCookie {
 		fmt.Println("Need to bypass hCaptcha to login to Epic Games Store.")
-		// getAccessibilityCookie(ctx)
+		getAccessibilityCookie(ctx)
 	}
 	getEpicStoreCookie(ctx)
 }
@@ -329,7 +329,8 @@ func main() {
 		chromedp.DisableGPU,
 		chromedp.Flag("disable-popup-blocking", true),
 		chromedp.Flag("start-maximized", true),
-		// chromedp.Flag("disable-blink-features", "AutomationControlled"),
+		chromedp.Flag("disable-blink-features", "AutomationControlled"),
+		chromedp.ProxyServer("https://165.225.77.47:9443"),
 	}
 	allocCtx, cancel := chromedp.NewExecAllocator(context.Background(), opts...)
 	defer cancel()
