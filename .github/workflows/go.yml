@@ -12,8 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:  
     
-    - name: Get Dockerfile and config.yaml.example
-      run: wget https://raw.githubusercontent.com/hb0nes/epic-store-free-games-snatcher/main/Dockerfile https://raw.githubusercontent.com/hb0nes/epic-store-free-games-snatcher/main/config.yaml.example
+    - name: Get config.yaml.example
+      run: wget https://raw.githubusercontent.com/hb0nes/epic-store-free-games-snatcher/main/config.yaml.example
       
     - name: "Configure config.yaml"
       run: |
@@ -28,11 +28,8 @@ jobs:
         sed -i 's|<IMGUR_SECRET>|${{ secrets.IMGUR_SECRET }}|' config.yaml
         sed -i 's|<IMGUR_REFRESH_TOKEN>|${{ secrets.IMGUR_REFRESH_TOKEN }}|' config.yaml
         
-    - name: Build Docker image
-      run: docker build -t yoink .
-        
     - name: Run Docker container
-      run:  docker run -it -v $(readlink -f config.yaml):/go/yoink/config.yaml --network host yoink
+      run:  docker run -v ${PWD}/config.yaml:/go/yoink/config.yaml --network host b0nes/epic-games-yoinker:latest
    
 #     - name: Download & Install Chrome
 #       run: sudo apt update && sudo apt install -y google-chrome-stable scrot xvfb
