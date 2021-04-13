@@ -5,10 +5,8 @@ No data is shared with third parties or me.
 # Getting Started
 There are three methods of automatically adding all of these games, docker, github actions and manual.
 ## Docker
-Download the docker file and build it:  
-`docker built -t yoink .`  
 Create a config.yaml (see section Manual) and run the image:  
-`docker run -it -v $(readlink -f config.yaml):/go/yoink/config.yaml --network host yoink`  
+`docker run -it -v ${PWD}/config.yaml:/go/yoink/config.yaml --network host b0nes/epic-games-yoinker:latest`  
 ## Automatic
 - [Fork](https://github.com/hb0nes/epic-store-free-games-snatcher/fork)  this repository
 - Add three or more GitHub secrets:
