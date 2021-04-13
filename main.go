@@ -330,7 +330,6 @@ func main() {
 		chromedp.Flag("disable-popup-blocking", true),
 		chromedp.Flag("start-maximized", true),
 		chromedp.Flag("disable-blink-features", "AutomationControlled"),
-		chromedp.ProxyServer("http://42.119.139.254:3128"),
 	}
 	allocCtx, cancel := chromedp.NewExecAllocator(context.Background(), opts...)
 	defer cancel()
