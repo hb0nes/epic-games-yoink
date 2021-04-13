@@ -43,7 +43,7 @@ func handleFreeGames(c context.Context, urls []string) {
 			callWithTimeout(c, chromedp.Click(`//button[text()[contains(.,"Continue")]]`), timeOut)
 		}
 		fmt.Println("Checking if already owned.")
-		if err := callWithTimeout(c, chromedp.WaitVisible(`//button[./span[text()[contains(.,"Owned")]]]`)); err == nil {
+		if err := callWithTimeout(c, chromedp.WaitVisible(`//button[./span[text()[contains(.,"Owned")]]]`), timeOut); err == nil {
 			fmt.Println("Already owned. Skipping.")
 			continue
 		}
