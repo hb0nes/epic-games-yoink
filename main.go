@@ -35,19 +35,24 @@ func callWithTimeout(c context.Context, a chromedp.QueryAction, seconds time.Dur
 
 func handleFreeGames(c context.Context, urls []string) {
 	fmt.Printf("Handling %d games!\n", len(urls))
+	timeOut := time.Second * 10
 	for _, url := range urls {
 		fmt.Printf("Checking URL: %s\n", url)
 		callWithTimeout(c, chromedp.Navigate(url), 30)
-		if err := callWithTimeout(c, chromedp.WaitEnabled(`//button[text()[contains(.,"Continue")]]`), 5); err == nil {
-			callWithTimeout(c, chromedp.Click(`//button[text()[contains(.,"Continue")]]`), 5)
+		if err := callWithTimeout(c, chromedp.WaitEnabled(`//button[text()[contains(.,"Continue")]]`), timeOut); err == nil {
+			callWithTimeout(c, chromedp.Click(`//button[text()[contains(.,"Continue")]]`), timeOut)
 		}
 		fmt.Println("Checking if already owned.")
-		if err := callWithTimeout(c, chromedp.WaitVisible(`//button[./span[text()[contains(.,"Owned")]]]`), 1); err == nil {
+		if err := callWithTimeout(c, chromedp.WaitVisible(`//button[./span[text()[contains(.,"Owned")]]]`)); err == nil {
 			fmt.Println("Already owned. Skipping.")
 			continue
 		}
+		// scroll down because sometimes the get button can't be found
 		fmt.Println("Waiting for GET button")
-		if err := callWithTimeout(c, chromedp.WaitEnabled(`//button[.//text()[contains(.,"Get")]]`), 5); err == nil {
+		time.Sleep(time.Second)
+		chromedp.EvaluateAsDevTools("window.scrollTo(0, 1000)", new(interface{})).Do(c)
+		time.Sleep(time.Second)
+		if err := callWithTimeout(c, chromedp.WaitEnabled(`//button[.//text()[contains(.,"Get")]]`), timeOut); err == nil {
 			fmt.Println("Clicking GET button")
 			chromedp.Sleep(time.Second).Do(c)
 			chromedp.Click(`//button[.//text()[contains(.,"Get")]]`).Do(c)
@@ -57,7 +62,7 @@ func handleFreeGames(c context.Context, urls []string) {
 			continue
 		}
 		fmt.Println("Waiting for Place Order")
-		if err := callWithTimeout(c, chromedp.WaitEnabled(`//button[./span[text()[contains(.,"Place Order")]]]`), 5); err == nil {
+		if err := callWithTimeout(c, chromedp.WaitEnabled(`//button[./span[text()[contains(.,"Place Order")]]]`), timeOut); err == nil {
 			fmt.Println("Clicking Place Order")
 			chromedp.Sleep(time.Second).Do(c)
 			chromedp.Click(`//button[./span[text()[contains(.,"Place Order")]]]`).Do(c)
@@ -67,7 +72,7 @@ func handleFreeGames(c context.Context, urls []string) {
 			continue
 		}
 		fmt.Println("Waiting for Agreement")
-		if err := callWithTimeout(c, chromedp.WaitEnabled(`//button[span[text()="I Agree"]]`), 5); err == nil {
+		if err := callWithTimeout(c, chromedp.WaitEnabled(`//button[span[text()="I Agree"]]`), timeOut); err == nil {
 			fmt.Println("Clicking I Agree")
 			chromedp.Sleep(time.Second).Do(c)
 			chromedp.Click(`//button[span[text()="I Agree"]]`).Do(c)
@@ -129,7 +134,7 @@ func getAccessibilityCookie(ctx context.Context) {
 	tries := 5
 	for _, link := range config.HCaptchaURLs {
 		for i := 0; i < tries; i++ {
-			fmt.Printf("Trying to get find hCaptcha cookie button... %d of %d\n", i+1, tries)
+			fmt.Printf("Trying to find hCaptcha cookie button... %d of %d\n", i+1, tries)
 			chromedp.Navigate(link).Do(ctx)
 			if err := callWithTimeout(ctx, chromedp.WaitEnabled(`//button[@data-cy='setAccessibilityCookie']`), 5); err == nil {
 				break
