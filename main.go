@@ -27,7 +27,7 @@ import (
 var config Config
 
 func callWithTimeout(c context.Context, a chromedp.QueryAction, seconds time.Duration) error {
-	ctx, cancel := context.WithTimeout(c, time.Second*seconds)
+	ctx, cancel := context.WithTimeout(c, seconds)
 	defer cancel()
 	err := a.Do(ctx)
 	return err
@@ -35,10 +35,9 @@ func callWithTimeout(c context.Context, a chromedp.QueryAction, seconds time.Dur
 
 func handleFreeGames(c context.Context, urls []string) {
 	fmt.Printf("Handling %d games!\n", len(urls))
-	timeOut := time.Second * 10
 	for _, url := range urls {
 		fmt.Printf("Checking URL: %s\n", url)
-		callWithTimeout(c, chromedp.Navigate(url), 30)
+		callWithTimeout(c, chromedp.Navigate(url), longTimeout)
 		if err := callWithTimeout(c, chromedp.WaitEnabled(`//button[text()[contains(.,"Continue")]]`), timeOut); err == nil {
 			callWithTimeout(c, chromedp.Click(`//button[text()[contains(.,"Continue")]]`), timeOut)
 		}
@@ -82,7 +81,7 @@ func handleFreeGames(c context.Context, urls []string) {
 			sendTelegramMessage(url, yoinkFailure)
 			continue
 		}
-		callWithTimeout(c, chromedp.WaitEnabled(`//span[text()="Thank you for buying"]`), 5)
+		callWithTimeout(c, chromedp.WaitEnabled(`//span[text()="Thank you for buying"]`), timeOut)
 	}
 }
 
@@ -112,22 +111,38 @@ type TelegramPost struct {
 }
 
 func getFreeGameURLs(ctx context.Context) (urls []string) {
-	chromedp.Run(ctx,
-		chromedp.Navigate("https://www.epicgames.com/store/en-US/free-games"),
-		chromedp.WaitVisible(`//a[.//text()[starts-with(.,"Free Now")]]`),
-		chromedp.Sleep(time.Second*5),
-		chromedp.QueryAfter(`//a[.//text()[starts-with(.,"Free Now")]]`, func(ctx context.Context, bla runtime.ExecutionContextID, nodes ...*cdp.Node) error {
-			if len(nodes) < 1 {
-				sendTelegramMessage("Couldn't find a free game...", yoinkFailure)
-				return errors.New("expected at least one node")
-			}
-			for _, node := range nodes {
-				url, _ := node.Attribute("href")
-				urls = append(urls, "https://www.epicgames.com"+url)
-			}
-			return nil
-		}))
-	return urls
+	tries := 5
+	for i := 0; i < tries; i++ {
+		if err := callWithTimeout(ctx, chromedp.Navigate("https://www.epicgames.com/store/en-US/free-games"), timeOut); err != nil {
+			log.Println("Could not navigate to free games page.")
+			log.Printf("Link to screenshot: %s", screenshot(ctx))
+		}
+		if err := callWithTimeout(ctx, chromedp.WaitVisible(`//a[.//text()[starts-with(.,"Free Now")]]`), timeOut); err != nil {
+			log.Println("Could not find urls with text that start with 'Free Now'.")
+			log.Printf("Link to screenshot: %s", screenshot(ctx))
+		}
+		if err := callWithTimeout(ctx,
+			chromedp.QueryAfter(`//a[.//text()[starts-with(.,"Free Now")]]`, func(ctx context.Context, bla runtime.ExecutionContextID, nodes ...*cdp.Node) error {
+				if len(nodes) < 1 {
+					return errors.New("no free games found")
+				}
+				for _, node := range nodes {
+					url, _ := node.Attribute("href")
+					urls = append(urls, "https://www.epicgames.com"+url)
+				}
+				return nil
+			}), timeOut); err != nil {
+			log.Println(err.Error())
+			log.Printf("Link to screenshot: %s", screenshot(ctx))
+			sendTelegramMessage("Couldn't find a free game...", yoinkFailure)
+		}
+		if len(urls) > 0 {
+			return
+		}
+	}
+
+	log.Fatal("Couldn't find more than 0 urls.")
+	return
 }
 
 func getAccessibilityCookie(ctx context.Context) {
@@ -136,7 +151,7 @@ func getAccessibilityCookie(ctx context.Context) {
 		for i := 0; i < tries; i++ {
 			fmt.Printf("Trying to find hCaptcha cookie button... %d of %d\n", i+1, tries)
 			chromedp.Navigate(link).Do(ctx)
-			if err := callWithTimeout(ctx, chromedp.WaitEnabled(`//button[@data-cy='setAccessibilityCookie']`), 5); err == nil {
+			if err := callWithTimeout(ctx, chromedp.WaitEnabled(`//button[@data-cy='setAccessibilityCookie']`), timeOut); err == nil {
 				break
 			}
 		}
@@ -157,7 +172,7 @@ func getAccessibilityCookie(ctx context.Context) {
 
 func handle2FA(ctx context.Context) (success bool) {
 	// If OTP/2FA is enabled, fill in the code
-	err := callWithTimeout(ctx, chromedp.WaitEnabled(`//input[@id='code']`), 5)
+	err := callWithTimeout(ctx, chromedp.WaitEnabled(`//input[@id='code']`), timeOut)
 	if err == nil && len(config.OTPSecret) < 32 {
 		log.Fatal("It appears 2FA is enabled for this account but the OTP Secret hasn't been configured in the configuration.")
 	}
@@ -172,7 +187,7 @@ func handle2FA(ctx context.Context) (success bool) {
 	}
 	chromedp.SendKeys(`//input[@id='code']`, code).Do(ctx)
 	time.Sleep(time.Second)
-	err = callWithTimeout(ctx, chromedp.WaitEnabled(`//button[@id='continue']`), 5)
+	err = callWithTimeout(ctx, chromedp.WaitEnabled(`//button[@id='continue']`), timeOut)
 	if err == nil {
 		chromedp.Click(`//button[@id='continue']`).Do(ctx)
 		log.Println("Clicked Continue button in 2FA process.")
@@ -184,27 +199,27 @@ func handle2FA(ctx context.Context) (success bool) {
 
 func getEpicStoreCookie(ctx context.Context) {
 	fmt.Println("Logging into Epic Games Store.")
-	tries := 3
+	tries := 10
 	for i := 0; i < tries; i++ {
 		fmt.Printf("Trying to log in to Epic Games Store... %d of %d\n", i+1, tries)
-		if err := callWithTimeout(ctx, chromedp.Navigate(`https://www.epicgames.com/id/login/epic`), 10); err != nil {
+		if err := callWithTimeout(ctx, chromedp.Navigate(`https://www.epicgames.com/id/login/epic`), longTimeout); err != nil {
 			log.Println("Couldnt navigate to login page.")
 			continue
 		}
-		if err := callWithTimeout(ctx, chromedp.WaitEnabled(`//input[@id='email']`), 20); err == nil {
+		if err := callWithTimeout(ctx, chromedp.WaitEnabled(`//input[@id='email']`), timeOut); err == nil {
 			chromedp.SendKeys(`//input[@id='email']`, config.Username).Do(ctx)
 		} else {
 			log.Println("Could not find email field.")
 			continue
 		}
-		if err := callWithTimeout(ctx, chromedp.WaitEnabled(`//input[@id='password']`), 20); err == nil {
+		if err := callWithTimeout(ctx, chromedp.WaitEnabled(`//input[@id='password']`), timeOut); err == nil {
 			chromedp.SendKeys(`//input[@id='password']`, config.Password).Do(ctx)
 		} else {
 			log.Println("Could not find password field.")
 			continue
 		}
-		if err := callWithTimeout(ctx, chromedp.WaitEnabled(`//button[@id='sign-in']`), 20); err == nil {
-			callWithTimeout(ctx, chromedp.Click(`//button[@id='sign-in']`), 2)
+		if err := callWithTimeout(ctx, chromedp.WaitEnabled(`//button[@id='sign-in']`), timeOut); err == nil {
+			callWithTimeout(ctx, chromedp.Click(`//button[@id='sign-in']`), timeOut)
 		} else {
 			log.Print("Could not find sign in button.")
 			continue
@@ -255,7 +270,7 @@ func getCookies(ctx context.Context) {
 	}
 	if !accessibilityCookie {
 		fmt.Println("Need to bypass hCaptcha to login to Epic Games Store.")
-		getAccessibilityCookie(ctx)
+		// getAccessibilityCookie(ctx)
 	}
 	getEpicStoreCookie(ctx)
 }
@@ -289,7 +304,7 @@ func setCookies(ctx context.Context) {
 			Expires: &expiryTime,
 		},
 	}
-	if err := callWithTimeout(ctx, chromedp.WaitEnabled(`//button[contains(@class, "onetrust-lg")]`), 5); err == nil {
+	if err := callWithTimeout(ctx, chromedp.WaitEnabled(`//button[contains(@class, "onetrust-lg")]`), timeOut); err == nil {
 		fmt.Println("Removed stoopid cookiebanner.")
 		chromedp.Click(`//button[contains(@class, "onetrust-lg")]`).Do(ctx)
 	}
@@ -319,6 +334,9 @@ func screenshot(ctx context.Context) string {
 	}
 	return url
 }
+
+const timeOut = time.Second * 5
+const longTimeout = time.Second * 30
 
 func main() {
 	config = readConfig()
