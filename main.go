@@ -41,6 +41,8 @@ func handleFreeGames(c context.Context, urls []string) {
 		for i := 0; i < 5; i++ {
 			if err := callWithTimeout(c, chromedp.Navigate(url), longTimeout); err == nil {
 				break
+			} else {
+				log.Printf("Received error on navigating to %s: %s", url, err.Error())
 			}
 		}
 		if err := callWithTimeout(c, chromedp.WaitEnabled(`//button[text()[contains(.,"Continue")]]`), timeOut); err == nil {
