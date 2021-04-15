@@ -338,7 +338,7 @@ func screenshot(ctx context.Context) string {
 	return url
 }
 
-const timeOut = time.Second * 5
+const timeOut = time.Second * 10
 const longTimeout = time.Second * 30
 
 func main() {
