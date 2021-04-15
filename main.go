@@ -373,7 +373,7 @@ func main() {
 	}
 	if err := chromedp.Run(taskCtx,
 		chromedp.ActionFunc(func(ctx context.Context) error {
-			setupLogger(ctx)
+			// setupLogger(ctx)
 			getCookies(ctx)
 			setCookies(ctx)
 			handleFreeGames(ctx, getFreeGameURLs(ctx))
