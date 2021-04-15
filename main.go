@@ -49,7 +49,7 @@ func handleFreeGames(c context.Context, urls []string) {
 		// scroll down because sometimes the get button can't be found
 		fmt.Println("Waiting for GET button")
 		time.Sleep(time.Second)
-		chromedp.EvaluateAsDevTools("window.scrollTo(0, 1000)", new(interface{})).Do(c)
+		chromedp.EvaluateAsDevTools("window.scrollTo(0, 1500)", new(interface{})).Do(c)
 		time.Sleep(time.Second)
 		if err := callWithTimeout(c, chromedp.WaitEnabled(`//button[.//text()[contains(.,"Get")]]`), timeOut); err == nil {
 			fmt.Println("Clicking GET button")
@@ -58,6 +58,7 @@ func handleFreeGames(c context.Context, urls []string) {
 		} else {
 			fmt.Println("Could not find the GET button. Skipping.")
 			sendTelegramMessage(url, yoinkFailure)
+			log.Printf("Link to screenshot: %s", screenshot(c))
 			continue
 		}
 		fmt.Println("Waiting for Place Order")
@@ -68,6 +69,7 @@ func handleFreeGames(c context.Context, urls []string) {
 		} else {
 			fmt.Println("Could not find the Place Order button. Skipping.")
 			sendTelegramMessage(url, yoinkFailure)
+			log.Printf("Link to screenshot: %s", screenshot(c))
 			continue
 		}
 		fmt.Println("Waiting for Agreement")
@@ -79,6 +81,7 @@ func handleFreeGames(c context.Context, urls []string) {
 		} else {
 			fmt.Println("Could not find the 'I Agree' button. Skipping.")
 			sendTelegramMessage(url, yoinkFailure)
+			log.Printf("Link to screenshot: %s", screenshot(c))
 			continue
 		}
 		callWithTimeout(c, chromedp.WaitEnabled(`//span[text()="Thank you for buying"]`), timeOut)
