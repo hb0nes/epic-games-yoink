@@ -18,4 +18,4 @@ RUN go get -u
 
 RUN echo "Current directory: ${PWD}"
 
-CMD Xvfb :99 -screen 0 800x600x8 & DISPLAY=:99 go run *.go
+CMD Xvfb :99 -screen 0 800x600x24+32 & DISPLAY=:99 go run *.go
