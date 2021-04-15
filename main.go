@@ -39,7 +39,7 @@ func handleFreeGames(c context.Context, urls []string) {
 		claimSuccessful := false
 		// Sometimes we receive forking 403... try this a couple of times too
 		for i := 0; i < 5; i++ {
-			fmt.Printf("Checking URL: %s\n - try %d out of %d...", url, i+1, 5)
+			fmt.Printf("Checking URL: %s - try %d out of %d...\n", url, i+1, 5)
 			if err := callWithTimeout(c, chromedp.Navigate(url), longTimeout); err != nil {
 				log.Printf("Received error on navigating to %s: %s", url, err.Error())
 				continue
@@ -81,6 +81,7 @@ func handleFreeGames(c context.Context, urls []string) {
 				log.Println("Claiming appears to be succesful.")
 				claimSuccessful = true
 				sendTelegramMessage(url, yoinkSuccess)
+				break
 			}
 		}
 		if !claimSuccessful {
