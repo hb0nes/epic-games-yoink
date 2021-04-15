@@ -37,7 +37,12 @@ func handleFreeGames(c context.Context, urls []string) {
 	fmt.Printf("Handling %d games!\n", len(urls))
 	for _, url := range urls {
 		fmt.Printf("Checking URL: %s\n", url)
-		callWithTimeout(c, chromedp.Navigate(url), longTimeout)
+		// Sometimes we receive forking 403... try this a couple of times too
+		for i := 0; i < 5; i++ {
+			if err := callWithTimeout(c, chromedp.Navigate(url), longTimeout); err == nil {
+				break
+			}
+		}
 		if err := callWithTimeout(c, chromedp.WaitEnabled(`//button[text()[contains(.,"Continue")]]`), timeOut); err == nil {
 			callWithTimeout(c, chromedp.Click(`//button[text()[contains(.,"Continue")]]`), timeOut)
 		}
@@ -48,9 +53,7 @@ func handleFreeGames(c context.Context, urls []string) {
 		}
 		// scroll down because sometimes the get button can't be found
 		fmt.Println("Waiting for GET button")
-		time.Sleep(time.Second)
-		chromedp.EvaluateAsDevTools("window.scrollTo(0, 1500)", new(interface{})).Do(c)
-		time.Sleep(time.Second)
+		// chromedp.EvaluateAsDevTools("window.scrollTo(0, 1500)", new(interface{})).Do(c)
 		if err := callWithTimeout(c, chromedp.WaitEnabled(`//button[.//text()[contains(.,"Get")]]`), timeOut); err == nil {
 			fmt.Println("Clicking GET button")
 			chromedp.Sleep(time.Second).Do(c)

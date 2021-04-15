@@ -8,7 +8,7 @@ RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.d
 
 RUN apt install -y ./google-chrome-stable_current_amd64.deb
 
-ADD https://api.github.com/repositories/321185660/git/refs/heads/main version.json
+ADD https://showcase.api.linx.twenty57.net/UnixTime/tounixtimestamp?datetime=now /tmp/bustcache
 
 RUN git clone https://www.github.com/hb0nes/free-game-snatcher-epicstore.git yoink
 
