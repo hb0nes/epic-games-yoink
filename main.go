@@ -36,60 +36,52 @@ func callWithTimeout(c context.Context, a chromedp.QueryAction, seconds time.Dur
 func handleFreeGames(c context.Context, urls []string) {
 	fmt.Printf("Handling %d games!\n", len(urls))
 	for _, url := range urls {
-		fmt.Printf("Checking URL: %s\n", url)
 		// Sometimes we receive forking 403... try this a couple of times too
 		for i := 0; i < 5; i++ {
-			if err := callWithTimeout(c, chromedp.Navigate(url), longTimeout); err == nil {
-				break
-			} else {
+			fmt.Printf("Checking URL: %s\n - try %d out of %d...", url, i+1, 5)
+			if err := callWithTimeout(c, chromedp.Navigate(url), longTimeout); err != nil {
 				log.Printf("Received error on navigating to %s: %s", url, err.Error())
+				continue
+			}
+			if err := callWithTimeout(c, chromedp.WaitEnabled(`//button[text()[contains(.,"Continue")]]`), timeOut); err == nil {
+				callWithTimeout(c, chromedp.Click(`//button[text()[contains(.,"Continue")]]`), timeOut)
+			} else {
+				continue
+			}
+			fmt.Println("Checking if already owned.")
+			if err := callWithTimeout(c, chromedp.WaitVisible(`//button[./span[text()[contains(.,"Owned")]]]`), timeOut); err == nil {
+				fmt.Println("Already owned. Skipping.")
+				break
+			}
+			fmt.Println("Waiting for GET button")
+			if err := callWithTimeout(c, chromedp.WaitEnabled(`//button[.//text()[contains(.,"Get")]]`), timeOut); err == nil {
+				fmt.Println("Clicking GET button")
+				chromedp.Click(`//button[.//text()[contains(.,"Get")]]`).Do(c)
+			} else {
+				fmt.Println("Could not find the GET button.")
+				continue
+			}
+			fmt.Println("Waiting for Place Order")
+			if err := callWithTimeout(c, chromedp.WaitEnabled(`//button[./span[text()[contains(.,"Place Order")]]]`), timeOut); err == nil {
+				fmt.Println("Clicking Place Order")
+				chromedp.Click(`//button[./span[text()[contains(.,"Place Order")]]]`).Do(c)
+			} else {
+				fmt.Println("Could not find the Place Order button.")
+				continue
+			}
+			fmt.Println("Waiting for Agreement")
+			if err := callWithTimeout(c, chromedp.WaitEnabled(`//button[span[text()="I Agree"]]`), timeOut); err == nil {
+				fmt.Println("Clicking I Agree")
+				chromedp.Click(`//button[span[text()="I Agree"]]`).Do(c)
+			} else {
+				fmt.Println("Could not find the 'I Agree' button.")
+				continue
+			}
+			if err := callWithTimeout(c, chromedp.WaitEnabled(`//span[text()="Thank you for buying"]`), timeOut); err == nil {
+				log.Println("Claiming appears to be succesful.")
+				sendTelegramMessage(url, yoinkSuccess)
 			}
 		}
-		if err := callWithTimeout(c, chromedp.WaitEnabled(`//button[text()[contains(.,"Continue")]]`), timeOut); err == nil {
-			callWithTimeout(c, chromedp.Click(`//button[text()[contains(.,"Continue")]]`), timeOut)
-		}
-		fmt.Println("Checking if already owned.")
-		if err := callWithTimeout(c, chromedp.WaitVisible(`//button[./span[text()[contains(.,"Owned")]]]`), timeOut); err == nil {
-			fmt.Println("Already owned. Skipping.")
-			continue
-		}
-		// scroll down because sometimes the get button can't be found
-		fmt.Println("Waiting for GET button")
-		// chromedp.EvaluateAsDevTools("window.scrollTo(0, 1500)", new(interface{})).Do(c)
-		if err := callWithTimeout(c, chromedp.WaitEnabled(`//button[.//text()[contains(.,"Get")]]`), timeOut); err == nil {
-			fmt.Println("Clicking GET button")
-			chromedp.Sleep(time.Second).Do(c)
-			chromedp.Click(`//button[.//text()[contains(.,"Get")]]`).Do(c)
-		} else {
-			fmt.Println("Could not find the GET button. Skipping.")
-			sendTelegramMessage(url, yoinkFailure)
-			log.Printf("Link to screenshot: %s", screenshot(c))
-			continue
-		}
-		fmt.Println("Waiting for Place Order")
-		if err := callWithTimeout(c, chromedp.WaitEnabled(`//button[./span[text()[contains(.,"Place Order")]]]`), timeOut); err == nil {
-			fmt.Println("Clicking Place Order")
-			chromedp.Sleep(time.Second).Do(c)
-			chromedp.Click(`//button[./span[text()[contains(.,"Place Order")]]]`).Do(c)
-		} else {
-			fmt.Println("Could not find the Place Order button. Skipping.")
-			sendTelegramMessage(url, yoinkFailure)
-			log.Printf("Link to screenshot: %s", screenshot(c))
-			continue
-		}
-		fmt.Println("Waiting for Agreement")
-		if err := callWithTimeout(c, chromedp.WaitEnabled(`//button[span[text()="I Agree"]]`), timeOut); err == nil {
-			fmt.Println("Clicking I Agree")
-			chromedp.Sleep(time.Second).Do(c)
-			chromedp.Click(`//button[span[text()="I Agree"]]`).Do(c)
-			sendTelegramMessage(url, yoinkSuccess)
-		} else {
-			fmt.Println("Could not find the 'I Agree' button. Skipping.")
-			sendTelegramMessage(url, yoinkFailure)
-			log.Printf("Link to screenshot: %s", screenshot(c))
-			continue
-		}
-		callWithTimeout(c, chromedp.WaitEnabled(`//span[text()="Thank you for buying"]`), timeOut)
 	}
 }
 

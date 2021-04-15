@@ -10,7 +10,7 @@ RUN apt install -y ./google-chrome-stable_current_amd64.deb
 
 ADD https://showcase.api.linx.twenty57.net/UnixTime/tounixtimestamp?datetime=now /tmp/bustcache
 
-RUN git clone https://www.github.com/hb0nes/free-game-snatcher-epicstore.git yoink
+RUN git clone --depth 1 https://www.github.com/hb0nes/free-game-snatcher-epicstore.git yoink
 
 WORKDIR yoink
 
