@@ -355,9 +355,9 @@ func main() {
 		chromedp.NoFirstRun,
 		chromedp.NoDefaultBrowserCheck,
 		chromedp.UserDataDir(dir),
-		// chromedp.DisableGPU,
-		// chromedp.Flag("disable-popup-blocking", true),
-		chromedp.Flag("start-maximized", true),
+		chromedp.DisableGPU,
+		chromedp.Flag("disable-popup-blocking", true),
+		// chromedp.Flag("start-maximized", true),
 		chromedp.Flag("disable-blink-features", "AutomationControlled"),
 	}
 	allocCtx, cancel := chromedp.NewExecAllocator(context.Background(), opts...)
