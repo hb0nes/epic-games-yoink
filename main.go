@@ -44,13 +44,11 @@ func handleFreeGames(c context.Context, urls []string) {
 				log.Printf("Received error on navigating to %s: %s", url, err.Error())
 				continue
 			}
-			if err := callWithTimeout(c, chromedp.WaitEnabled(`//button[text()[contains(.,"Continue")]]`), timeOut); err == nil {
+			if err := callWithTimeout(c, chromedp.WaitEnabled(`//button[text()[contains(.,"Continue")]]`), shortTimeOut); err == nil {
 				callWithTimeout(c, chromedp.Click(`//button[text()[contains(.,"Continue")]]`), timeOut)
-			} else {
-				continue
 			}
 			fmt.Println("Checking if already owned.")
-			if err := callWithTimeout(c, chromedp.WaitVisible(`//button[./span[text()[contains(.,"Owned")]]]`), 2); err == nil {
+			if err := callWithTimeout(c, chromedp.WaitVisible(`//button[./span[text()[contains(.,"Owned")]]]`), shortTimeOut); err == nil {
 				fmt.Println("Already owned. Skipping.")
 				claimSuccessful = true
 				break
@@ -342,6 +340,7 @@ func screenshot(ctx context.Context) string {
 	return url
 }
 
+const shortTimeOut = time.Second * 3
 const timeOut = time.Second * 10
 const longTimeout = time.Second * 30
 
