@@ -36,6 +36,7 @@ func callWithTimeout(c context.Context, a chromedp.QueryAction, seconds time.Dur
 func handleFreeGames(c context.Context, urls []string) {
 	fmt.Printf("Handling %d games!\n", len(urls))
 	for _, url := range urls {
+		claimSuccessful := false
 		// Sometimes we receive forking 403... try this a couple of times too
 		for i := 0; i < 5; i++ {
 			fmt.Printf("Checking URL: %s\n - try %d out of %d...", url, i+1, 5)
@@ -49,8 +50,9 @@ func handleFreeGames(c context.Context, urls []string) {
 				continue
 			}
 			fmt.Println("Checking if already owned.")
-			if err := callWithTimeout(c, chromedp.WaitVisible(`//button[./span[text()[contains(.,"Owned")]]]`), timeOut); err == nil {
+			if err := callWithTimeout(c, chromedp.WaitVisible(`//button[./span[text()[contains(.,"Owned")]]]`), 2); err == nil {
 				fmt.Println("Already owned. Skipping.")
+				claimSuccessful = true
 				break
 			}
 			fmt.Println("Waiting for GET button")
@@ -79,8 +81,13 @@ func handleFreeGames(c context.Context, urls []string) {
 			}
 			if err := callWithTimeout(c, chromedp.WaitEnabled(`//span[text()="Thank you for buying"]`), timeOut); err == nil {
 				log.Println("Claiming appears to be succesful.")
+				claimSuccessful = true
 				sendTelegramMessage(url, yoinkSuccess)
 			}
+		}
+		if !claimSuccessful {
+			log.Printf("Claiming %s unsuccessful.\n", url)
+			log.Printf("Link to screenshot: %s", screenshot(c))
 		}
 	}
 }
