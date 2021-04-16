@@ -40,7 +40,7 @@ func getAccessibilityCookie(ctx context.Context, user User) {
 func checkCookies(ctx context.Context) (accessibilityCookie bool, epicCookie bool) {
 	siteCookies, _ := network.GetCookies().Do(ctx)
 	for _, cookie := range siteCookies {
-		log.Printf("Name: %s and Value: %s", cookie.Name, cookie.Value)
+		// log.Printf("Name: %s and Value: %s", cookie.Name, cookie.Value)
 		if cookie.Name == "EPIC_SSO" {
 			epicCookie = true
 		}
