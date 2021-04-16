@@ -7,6 +7,8 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+var config Config
+
 // Config exposes config.yaml
 type Config struct {
 	HCaptchaURLs      []string `yaml:"hCaptchaURLs"`
