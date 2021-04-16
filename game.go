@@ -11,7 +11,7 @@ import (
 	"github.com/chromedp/chromedp"
 )
 
-func handleFreeGames(c context.Context, urls []string) {
+func handleFreeGames(c context.Context, urls []string, user User) {
 	fmt.Printf("Handling %d games!\n", len(urls))
 	for _, url := range urls {
 		claimSuccessful := false
@@ -58,7 +58,7 @@ func handleFreeGames(c context.Context, urls []string) {
 			if err := callWithTimeout(c, chromedp.WaitEnabled(`//span[text()="Thank you for buying"]`), longTimeout); err == nil {
 				log.Println("Claiming appears to be succesful.")
 				claimSuccessful = true
-				sendTelegramMessage(url, yoinkSuccess)
+				sendTelegramMessage(url, yoinkSuccess, user)
 				break
 			}
 		}
@@ -69,7 +69,7 @@ func handleFreeGames(c context.Context, urls []string) {
 	}
 }
 
-func getFreeGameURLs(ctx context.Context) (urls []string) {
+func getFreeGameURLs(ctx context.Context, user User) (urls []string) {
 	tries := 5
 	for i := 0; i < tries; i++ {
 		if err := callWithTimeout(ctx, chromedp.Navigate("https://www.epicgames.com/store/en-US/free-games"), timeOut); err != nil {
@@ -93,7 +93,7 @@ func getFreeGameURLs(ctx context.Context) (urls []string) {
 			}), timeOut); err != nil {
 			log.Println(err.Error())
 			log.Printf("Link to screenshot: %s", screenshot(ctx))
-			sendTelegramMessage("Couldn't find a free game...", yoinkFailure)
+			sendTelegramMessage("Couldn't find a free game...", yoinkFailure, user)
 		}
 		if len(urls) > 0 {
 			return

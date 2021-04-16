@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -76,11 +75,15 @@ func main() {
 	}
 	if err := chromedp.Run(taskCtx,
 		chromedp.ActionFunc(func(ctx context.Context) error {
-			setupLogger(ctx)
-			getCookies(ctx)
-			setCookies(ctx)
-			handleFreeGames(ctx, getFreeGameURLs(ctx))
-			fmt.Println("Done!")
+			// setupLogger(ctx)
+			for _, user := range config.Users {
+				log.Printf("Yoinking free games for user: %s\n...", user.Username)
+				getCookies(ctx, user)
+				setCookiesMisc(ctx)
+				handleFreeGames(ctx, getFreeGameURLs(ctx, user), user)
+				logoutEpicGames(ctx)
+				log.Printf("Done with yoinking for user: %s\n", user.Username)
+			}
 			return nil
 		}),
 	); err != nil {

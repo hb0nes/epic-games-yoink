@@ -10,7 +10,12 @@ import (
 	"github.com/pquerna/otp/totp"
 )
 
-func getEpicStoreCookie(ctx context.Context) {
+func logoutEpicGames(ctx context.Context) {
+	log.Println("Logging out of Epic Games.")
+	callWithTimeout(ctx, chromedp.Navigate(`https://www.epicgames.com/logout`), timeOut)
+	time.Sleep(time.Second * 5)
+}
+func loginEpicGames(ctx context.Context, user User) {
 	fmt.Println("Logging into Epic Games Store.")
 	tries := 10
 	for i := 0; i < tries; i++ {
@@ -20,13 +25,13 @@ func getEpicStoreCookie(ctx context.Context) {
 			continue
 		}
 		if err := callWithTimeout(ctx, chromedp.WaitEnabled(`//input[@id='email']`), timeOut); err == nil {
-			chromedp.SendKeys(`//input[@id='email']`, config.Username).Do(ctx)
+			chromedp.SendKeys(`//input[@id='email']`, user.Username).Do(ctx)
 		} else {
 			log.Println("Could not find email field.")
 			continue
 		}
 		if err := callWithTimeout(ctx, chromedp.WaitEnabled(`//input[@id='password']`), timeOut); err == nil {
-			chromedp.SendKeys(`//input[@id='password']`, config.Password).Do(ctx)
+			chromedp.SendKeys(`//input[@id='password']`, user.Password).Do(ctx)
 		} else {
 			log.Println("Could not find password field.")
 			continue
@@ -37,7 +42,7 @@ func getEpicStoreCookie(ctx context.Context) {
 			log.Print("Could not find sign in button.")
 			continue
 		}
-		if success := handle2FA(ctx); !success {
+		if success := handle2FA(ctx, user); !success {
 			continue
 		}
 		// Wait for 10 seconds to check if we're logged in
@@ -59,16 +64,16 @@ func getEpicStoreCookie(ctx context.Context) {
 	log.Fatal("Exiting.")
 }
 
-func handle2FA(ctx context.Context) (success bool) {
+func handle2FA(ctx context.Context, user User) (success bool) {
 	// If OTP/2FA is enabled, fill in the code
 	err := callWithTimeout(ctx, chromedp.WaitEnabled(`//input[@id='code']`), timeOut)
-	if err == nil && len(config.OTPSecret) < 32 {
+	if err == nil && len(user.OTPSecret) < 32 {
 		log.Fatal("It appears 2FA is enabled for this account but the OTP Secret hasn't been configured in the configuration.")
 	}
 	if err != nil {
 		return true
 	}
-	code, err := totp.GenerateCode(config.OTPSecret, time.Now())
+	code, err := totp.GenerateCode(user.OTPSecret, time.Now())
 	fmt.Println("OTP Password is " + code)
 	if err != nil {
 		log.Fatal("OTPSecret configured but cannot derive code from it. Double check the config.")

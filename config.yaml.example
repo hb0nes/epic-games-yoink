@@ -1,10 +1,11 @@
 hCaptchaURLs: 
   - <hCAPTCHA_ACCESSIBILITY_URL>
   - <FOR_EXAMPLE:https://accounts.hcaptcha.com/verify_email/a846b45f-c7bc-4a5d-a63b-d9eab0470aa1>
-username: "<EPIC_GAMES_STORE_USERNAME>"
-password: "<EPIC_GAMES_STORE_PASSWORD>"
-OTPSecret: "<EPIC_GAMES_STORE_OTPSECRET>"
-telegramID: "<TELEGRAM_ID>"
+users:
+  - username: "<EPIC_GAMES_STORE_USERNAME>"
+    password: "<EPIC_GAMES_STORE_PASSWORD>"
+    OTPSecret: "<EPIC_GAMES_STORE_OTPSECRET>"
+    telegramID: "<TELEGRAM_ID>"
 imgurClientID: "<IMGUR_CLIENT_ID>"
 imgurSecret: "<IMGUR_SECRET>"
 imgurRefreshToken: "<IMGUR_REFRESH_TOKEN>"

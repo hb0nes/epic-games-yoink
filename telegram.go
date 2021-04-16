@@ -19,11 +19,11 @@ type TelegramPost struct {
 	Status int    `json:"Status"`
 }
 
-func sendTelegramMessage(url string, status int) {
-	if !(len(config.TelegramID) > 0) {
+func sendTelegramMessage(url string, status int, user User) {
+	if !(len(user.TelegramID) > 0) {
 		return
 	}
-	tgParamsJSON, _ := json.Marshal(TelegramPost{ID: config.TelegramID, URL: url, Status: status})
+	tgParamsJSON, _ := json.Marshal(TelegramPost{ID: user.TelegramID, URL: url, Status: status})
 	res, err := http.Post("https://epic-games-yoinker-api.azurewebsites.net/message/send", "application/json", bytes.NewBuffer(tgParamsJSON))
 	if err != nil {
 		log.Println(err)

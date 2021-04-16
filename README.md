@@ -3,10 +3,16 @@ This repository can serve as a example for your own code, or can be used as a fu
 The program will log into your account on epicgames.com and add all free games that it finds to your account.
 No data is shared with third parties or me.
 # Getting Started
-There are three methods of automatically adding all of these games, docker, github actions and manual.
+IMPORTANT NOTE:
+If you are running this for a fresh account, Epic Games will ask for you to agree to some terms.
+I am not going to do this for you with this program because, before we know it, thousands of empty accounts are being created for this. That is not the purpose of this tool. It should behave like a human and not spam.
+
+Alright, so there are three methods of automatically adding all of these games, docker, github actions and manual.
 ## Docker
-Create a config.yaml (see section Manual) and run the image:  
-`docker run -it -v ${PWD}/config.yaml:/go/yoink/config.yaml --network host b0nes/epic-games-yoinker:latest`  
+Create a config.yaml (see section Manual) and run the image:
+`docker run -it -v ${PWD}/config.yaml:/go/yoink/config.yaml --network host b0nes/epic-games-yoinker:latest`
+Using it this way, there is support for multiple users and you can schedule it on a small PC in your home or something.
+Docker and Chrome behave super slow together. I don't know why, but it's inefficient compared to just running the browser without Docker.
 ## Automatic
 - [Fork](https://github.com/hb0nes/epic-store-free-games-snatcher/fork)  this repository
 - Add three or more GitHub secrets:

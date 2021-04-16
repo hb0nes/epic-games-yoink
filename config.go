@@ -12,6 +12,7 @@ var config Config
 // Config exposes config.yaml
 type Config struct {
 	HCaptchaURLs      []string `yaml:"hCaptchaURLs"`
+	Users             []User   `yaml:"users"`
 	Username          string   `yaml:"username"`
 	Password          string   `yaml:"password"`
 	OTPSecret         string   `yaml:"OTPSecret"`
@@ -19,6 +20,13 @@ type Config struct {
 	ImgurClientID     string   `yaml:"imgurClientID"`
 	ImgurSecret       string   `yaml:"imgurSecret"`
 	ImgurRefreshToken string   `yaml:"imgurRefreshToken"`
+}
+
+type User struct {
+	Username   string `yaml:"username"`
+	Password   string `yaml:"password"`
+	OTPSecret  string `yaml:"OTPSecret"`
+	TelegramID string `yaml:"telegramID"`
 }
 
 func handleErrorFatal(err error) {
