@@ -47,7 +47,7 @@ func checkCookies(ctx context.Context) (accessibilityCookie bool, epicCookie boo
 	}
 	allCookies, _ := network.GetAllCookies().Do(ctx)
 	for _, cookie := range allCookies {
-		log.Printf("Name: %s and Value: %s", cookie.Name, cookie.Value)
+		// log.Printf("Name: %s and Value: %s", cookie.Name, cookie.Value)
 		if cookie.Name == "hc_accessibility" {
 			accessibilityCookie = true
 		}
