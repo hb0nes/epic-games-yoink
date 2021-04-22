@@ -58,7 +58,7 @@ func main() {
 		chromedp.NoFirstRun,
 		chromedp.NoDefaultBrowserCheck,
 		chromedp.UserDataDir(dir),
-		chromedp.DisableGPU,
+		// chromedp.DisableGPU,
 		chromedp.Flag("disable-popup-blocking", true),
 		chromedp.Flag("disable-blink-features", "AutomationControlled"),
 	}
