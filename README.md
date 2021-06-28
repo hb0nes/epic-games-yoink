@@ -16,19 +16,6 @@ Create a config.yaml (see section Manual) and run the image:
 `docker run -it -v ${PWD}/config.yaml:/go/yoink/config.yaml --network host b0nes/epic-games-yoinker:latest`
 Using it this way, there is support for multiple users and you can schedule it on a small PC in your home or something.
 Docker and Chrome behave super slow together. I don't know why, but it's inefficient compared to just running the browser without Docker.
-## Automatic
-- [Fork](https://github.com/hb0nes/epic-store-free-games-snatcher/fork)  this repository
-- Add three or more GitHub secrets:
-  - hCaptchaURL - Mandatory
-  - username - Mandatory
-  - password - Mandatory
-  - OTPSecret - Optional - For 2FA
-  - telegramID - Optional - Get notifications. You can get your telegramID by sending a message to @EpicGamesYoinkBot
-  - IMGUR_CLIENT_ID - Optional - In case you want to see screenshot URLs in the logs, you can insert your own imgur api credentials, but it isn't necessary
-  - IMGUR_SECRET - Optional
-  - IMGUR_REFRESH_TOKEN - Optional
-- Enable [Git Actions](https://docs.github.com/en/free-pro-team@latest/actions/managing-workflow-runs/disabling-and-enabling-a-workflow) and enable the 'Go' workflow.
-- It will run twice per day, each day. Do not adjust the interval, hCaptcha has very strict ratelimits.
 ## Manual
 - Fetch the proper [release](https://github.com/hb0nes/epic-store-free-games-snatcher/releases).
 - Go [here](https://dashboard.hcaptcha.com/signup?type=accessibility) and get an accessibility URL by filling in your e-mail. The mail that they send you contains a button.
