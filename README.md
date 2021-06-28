@@ -1,3 +1,6 @@
+# NON-ACTIVE
+Serves for posterity or maybe inspiration. Does not actually run anymore.
+
 # What is this?
 This repository can serve as a example for your own code, or can be used as a full solution.
 The program will log into your account on epicgames.com and add all free games that it finds to your account.
