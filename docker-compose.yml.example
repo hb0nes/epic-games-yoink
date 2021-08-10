@@ -1,0 +1,7 @@
+version: '3.3'
+services:
+    epic-games-yoinker:
+        volumes:
+            - './config.yaml:/config/config.yaml'
+        network_mode: host
+        image: 'b0nes/epic-games-yoinker:latest'
