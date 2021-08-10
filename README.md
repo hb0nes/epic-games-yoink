@@ -13,7 +13,7 @@ I am not going to do this for you with this program because, before we know it, 
 Alright, so there are three methods of automatically adding all of these games, docker, github actions and manual.
 ## Docker
 Create a config.yaml (see section Manual) and run the image:
-`docker run -it -v ${PWD}/config.yaml:/go/yoink/config.yaml --network host b0nes/epic-games-yoinker:latest`
+`docker run -it -v ${PWD}/config.yaml:/config/config.yaml --network host b0nes/epic-games-yoinker:latest`
 Using it this way, there is support for multiple users and you can schedule it on a small PC in your home or something.
 Docker and Chrome behave super slow together. I don't know why, but it's inefficient compared to just running the browser without Docker.
 ## Manual
